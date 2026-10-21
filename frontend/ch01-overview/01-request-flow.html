@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 1.1 什么是全栈开发（三、一个请求的完整流程）===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1.1 一个请求的完整流程</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>一个请求的完整流程</h1>
+        <nav>
+            <a href="index.html">总览</a>
+            <a href="01-request-flow.html">请求流程</a>
+            <a href="02-roles.html">前后端职责</a>
+            <a href="03-stack.html">技术栈</a>
+            <a href="04-env.html">环境搭建</a>
+            <a href="05-structure.html">项目结构</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、从输入网址到看到页面</h2>
+            <p>下面这条链路是全栈开发的「主干道」。不管你写的是哪一层，最终都是在链路的某一环上工作。</p>
+
+            <div class="flow">
+                <div class="flow-step"><strong>浏览器</strong><span>发起请求</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><strong>DNS</strong><span>域名 → IP</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><strong>Nginx</strong><span>静态文件 / 转发</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><strong>FastAPI</strong><span>业务逻辑</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><strong>MySQL</strong><span>读写数据</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><strong>响应</strong><span>JSON / HTML</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><strong>渲染</strong><span>DOM 更新</span></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>二、每一环到底在干什么</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>环节</th>
+                        <th>负责的事</th>
+                        <th>出问题时的表现</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>浏览器</td>
+                        <td>发请求、解析 HTML/CSS、执行 JS、渲染页面</td>
+                        <td>页面白屏、控制台报错</td>
+                    </tr>
+                    <tr>
+                        <td>DNS</td>
+                        <td>把域名解析成服务器 IP</td>
+                        <td>域名打不开，但直接用 IP 能开</td>
+                    </tr>
+                    <tr>
+                        <td>Nginx</td>
+                        <td>静态文件直接返回，接口请求转发给后端</td>
+                        <td>404 / 502，静态资源 200 但接口挂了</td>
+                    </tr>
+                    <tr>
+                        <td>FastAPI</td>
+                        <td>校验参数、执行业务、组织响应</td>
+                        <td>500 内部错误，或 422 参数校验失败</td>
+                    </tr>
+                    <tr>
+                        <td>MySQL</td>
+                        <td>持久化数据，按条件查询</td>
+                        <td>接口变慢、数据不落库、连接数耗尽</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>三、同一条链路，两种走法</h2>
+            <p>同样是「打开一个页面」，前后端分离与传统服务端渲染的链路不一样，
+                排查问题的第一步就是先搞清楚自己站在哪条链路上。</p>
+
+            <div class="split-2">
+                <div class="panel">
+                    <h3>服务端渲染（SSR）</h3>
+                    <ul>
+                        <li>浏览器请求页面 → Nginx → 后端查库 → 拼好 HTML 返回</li>
+                        <li>首屏快，SEO 友好</li>
+                        <li>每次切页都要重新请求整页</li>
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h3>前后端分离</h3>
+                    <ul>
+                        <li>浏览器先拿到静态 HTML/JS → JS 再 fetch 接口拿 JSON → 前端渲染</li>
+                        <li>切页不刷新，交互更顺</li>
+                        <li>首屏多一次请求，对 SEO 不友好（需要额外处理）</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>四、全栈开发的能力模型</h2>
+            <p>全栈不是「每样都会一点」，而是能把一条链路自己走通。四层能力缺一层，链路就断。</p>
+
+            <ul class="checklist">
+                <li><span class="num-tag">1</span><label>前端：HTML / CSS / JS，能把接口数据变成页面</label></li>
+                <li><span class="num-tag">2</span><label>后端：能写接口、校验参数、处理错误</label></li>
+                <li><span class="num-tag">3</span><label>数据库：能设计表、写查询、做基本优化</label></li>
+                <li><span class="num-tag">4</span><label>部署：能把服务跑在服务器上，配好域名与 HTTPS</label></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 1 章 · 全栈开发概述与环境准备 · 对应笔记 1.1</p>
+    </footer>
+</body>
+</html>

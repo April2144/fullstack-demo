@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 3.3 表单与用户输入 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3.3 表单与用户输入</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>表单与用户输入</h1>
+        <nav class="nav-bar">
+            <a href="index.html">返回汇总</a>
+            <a href="01-layout.html">页面布局</a>
+            <a href="02-theme.html">主题</a>
+            <a href="03-form.html" class="active">表单</a>
+            <a href="04-render.html">渲染</a>
+            <a href="05-responsive.html">响应式</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、基础表单结构</h2>
+            <p>每个控件必须有 <code>label</code> 且用 <code>for</code> 指向控件的 <code>id</code>：
+                点文字能聚焦输入框，读屏软件也能念出字段名。</p>
+
+            <!-- novalidate：关掉浏览器默认气泡，改用页面内的错误提示（样式统一、可定制） -->
+            <form id="profileForm" novalidate>
+                <div class="form-grid">
+                    <!-- 1. 文本 -->
+                    <div class="field field-required">
+                        <label for="f-username">用户名</label>
+                        <input type="text" id="f-username" name="username" placeholder="至少 3 个字符" autocomplete="username">
+                        <span class="hint-error" data-error-for="f-username"></span>
+                    </div>
+
+                    <!-- 2. 密码（带显示切换） -->
+                    <div class="field field-required">
+                        <label for="f-password">密码</label>
+                        <input type="password" id="f-password" name="password" placeholder="至少 8 位" autocomplete="new-password">
+                        <span class="hint-error" data-error-for="f-password"></span>
+                        <label class="switch" style="font-size: 12px;">
+                            <input type="checkbox" id="f-showPwd">
+                            <span class="switch-track"></span>
+                            显示密码
+                        </label>
+                    </div>
+
+                    <!-- 3. 邮箱 -->
+                    <div class="field field-required">
+                        <label for="f-email">邮箱</label>
+                        <input type="email" id="f-email" name="email" placeholder="name@example.com" autocomplete="email">
+                        <span class="hint-error" data-error-for="f-email"></span>
+                    </div>
+
+                    <!-- 4. 数字 -->
+                    <div class="field">
+                        <label for="f-age">年龄</label>
+                        <input type="number" id="f-age" name="age" min="18" max="120" step="1" placeholder="18 ~ 120">
+                        <span class="hint-error" data-error-for="f-age"></span>
+                    </div>
+
+                    <!-- 5. 电话 -->
+                    <div class="field">
+                        <label for="f-phone">手机号</label>
+                        <input type="tel" id="f-phone" name="phone" placeholder="11 位手机号" maxlength="11">
+                        <span class="hint-error" data-error-for="f-phone"></span>
+                    </div>
+
+                    <!-- 6. 日期 -->
+                    <div class="field">
+                        <label for="f-birthday">生日</label>
+                        <input type="date" id="f-birthday" name="birthday">
+                        <span class="hint-error" data-error-for="f-birthday"></span>
+                    </div>
+
+                    <!-- 8. 下拉框 -->
+                    <div class="field">
+                        <label for="f-city">城市</label>
+                        <select id="f-city" name="city">
+                            <option value="">请选择</option>
+                            <option value="beijing">北京</option>
+                            <option value="shanghai">上海</option>
+                            <option value="guangzhou">广州</option>
+                            <option value="shenzhen">深圳</option>
+                        </select>
+                        <span class="hint-error" data-error-for="f-city"></span>
+                    </div>
+
+                    <!-- 12. 文件上传 -->
+                    <div class="field">
+                        <label for="f-avatar">头像</label>
+                        <input type="file" id="f-avatar" name="avatar" accept="image/*">
+                        <span class="hint-error" data-error-for="f-avatar"></span>
+                    </div>
+                </div>
+
+                <!-- 7. 多行文本 + 字符计数 -->
+                <div class="field">
+                    <label for="f-bio">个人简介</label>
+                    <textarea id="f-bio" name="bio" rows="3" maxlength="120"
+                              placeholder="最多 120 字"></textarea>
+                    <span class="counter" id="bioCounter">0 / 120</span>
+                    <span class="hint-error" data-error-for="f-bio"></span>
+                </div>
+
+                <!-- 9. 单选 -->
+                <fieldset style="border: none; padding: 0; margin: 0 0 var(--space-3);">
+                    <legend style="font-size: 13px; color: var(--color-muted); margin-bottom: var(--space-1);">性别</legend>
+                    <div class="btn-row">
+                        <label><input type="radio" name="gender" value="male" checked> 男</label>
+                        <label><input type="radio" name="gender" value="female"> 女</label>
+                        <label><input type="radio" name="gender" value="other"> 不便透露</label>
+                    </div>
+                </fieldset>
+
+                <!-- 10. 复选 -->
+                <fieldset style="border: none; padding: 0; margin: 0 0 var(--space-3);">
+                    <legend style="font-size: 13px; color: var(--color-muted); margin-bottom: var(--space-1);">技能（可多选）</legend>
+                    <div class="btn-row">
+                        <label><input type="checkbox" name="skills" value="html"> HTML</label>
+                        <label><input type="checkbox" name="skills" value="css"> CSS</label>
+                        <label><input type="checkbox" name="skills" value="js"> JavaScript</label>
+                        <label><input type="checkbox" name="skills" value="py"> Python</label>
+                    </div>
+                </fieldset>
+
+                <!-- 11. 开关 -->
+                <div class="field">
+                    <label class="switch">
+                        <input type="checkbox" id="f-notify" name="notify" checked>
+                        <span class="switch-track"></span>
+                        接收更新通知
+                    </label>
+                </div>
+
+                <div class="btn-row">
+                    <button type="submit" class="btn">保存</button>
+                    <button type="reset" class="btn btn-ghost">重置</button>
+                </div>
+            </form>
+
+            <!-- 提交结果：只有校验全通过才会填这段 -->
+            <div class="toast is-hidden" id="formResult" style="margin: var(--space-4) 0 0; max-width: none;"></div>
+        </section>
+
+        <section class="card">
+            <h2>二、校验的四个时机</h2>
+            <dl>
+                <dt>失焦校验（blur）</dt>
+                <dd>用户填完一项离开时校验，不会边打字边报错，打扰最少。</dd>
+
+                <dt>实时校验（input）</dt>
+                <dd>输入过程中实时反馈，适合字符计数、密码强度这类即时反馈。</dd>
+
+                <dt>提交时校验（submit）</dt>
+                <dd>最后一道关卡，必须把所有字段全查一遍，任一项不过就拦住提交。</dd>
+
+                <dt>HTML5 原生校验</dt>
+                <dd>靠 <code>required</code>、<code>type="email"</code>、<code>minlength</code> 等属性，
+                    不够用时再上 JS。本页关掉了原生气泡（<code>novalidate</code>），全部自己接管。</dd>
+            </dl>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 3 章 · 页面开发与交互 · 对应笔记 3.3</p>
+    </footer>
+
+    <script src="03-form.js"></script>
+</body>
+</html>

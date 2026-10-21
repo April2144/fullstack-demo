@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 3.2 样式与主题设计 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3.2 样式与主题设计</title>
+
+    <!-- 8.3 避免闪烁：必须在 CSS 之前执行，先把 data-theme 定好 -->
+    <script>
+        (function () {
+            var saved = localStorage.getItem('demo-theme');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.dataset.theme = saved || (prefersDark ? 'dark' : 'light');
+        })();
+    </script>
+
+    <!-- 引入顺序不能反：先基础样式，再主题覆盖 -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="02-theme.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>样式与主题设计</h1>
+        <nav class="nav-bar">
+            <a href="index.html">返回汇总</a>
+            <a href="01-layout.html">页面布局</a>
+            <a href="02-theme.html" class="active">主题</a>
+            <a href="03-form.html">表单</a>
+            <a href="04-render.html">渲染</a>
+            <a href="05-responsive.html">响应式</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、CSS 变量：改一处，全站生效</h2>
+            <p>下面这些色块、按钮、卡片，用的都是同一套 <code>--color-*</code> 变量。
+                切主题时没有任何选择器被改，只是变量值换了一套。</p>
+
+            <div class="btn-row" style="margin-bottom: var(--space-4);">
+                <button type="button" class="theme-toggle" id="themeToggle">切换主题</button>
+                <button type="button" class="btn">主按钮</button>
+                <button type="button" class="btn btn-ghost">次按钮</button>
+                <button type="button" class="btn btn-danger">危险按钮</button>
+            </div>
+
+            <div class="swatches">
+                <div class="swatch swatch-ok">--color-primary</div>
+                <div class="swatch swatch-weak">--color-primary-weak</div>
+                <div class="swatch swatch-muted">--color-border</div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>二、字号阶梯</h2>
+            <p>全站只用 5 档字号。随手写 <code>15.5px</code> 这类数值，最后一定对不齐。</p>
+
+            <p class="text-xl" style="margin: 0;">24px 页面主标题</p>
+            <p class="text-lg" style="margin: 0;">18px 区块标题</p>
+            <p class="text-base" style="margin: 0;">15px 正文</p>
+            <p class="text-sm" style="margin: 0;">13px 辅助文字</p>
+            <p class="text-xs" style="margin: 0;">12px 标签 / 注释</p>
+        </section>
+
+        <section class="card">
+            <h2>三、间距系统</h2>
+            <p>以 4px 为基准，<code>--space-1</code> 到 <code>--space-6</code> 共 6 档。</p>
+
+            <div class="gap-demo">
+                <div class="gap-bar" style="height: 4px;"></div>
+                <div class="gap-bar" style="height: 8px;"></div>
+                <div class="gap-bar" style="height: 12px;"></div>
+                <div class="gap-bar" style="height: 16px;"></div>
+                <div class="gap-bar" style="height: 24px;"></div>
+                <div class="gap-bar" style="height: 32px;"></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>四、圆角与阴影</h2>
+            <p>同一层级用同一个圆角值：卡片 10px，控件 8px，小标签 999px（胶囊形）。</p>
+
+            <div class="radius-demo">
+                <div class="radius-box" style="border-radius: 4px;">4px</div>
+                <div class="radius-box" style="border-radius: 8px;">8px</div>
+                <div class="radius-box" style="border-radius: 10px;">10px</div>
+                <div class="radius-box" style="border-radius: 999px;">999px</div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>五、组件套用同一套变量</h2>
+            <p>卡片、按钮、输入框、标签各自成型，但颜色全部来自变量 —— 这就是样式系统的意义。</p>
+
+            <div class="card-grid">
+                <article class="product-card">
+                    <h3>基础版</h3>
+                    <p class="price">¥0</p>
+                    <p class="desc">适合先跑通流程的个人项目。</p>
+                    <span class="tag">推荐</span>
+                </article>
+                <article class="product-card">
+                    <h3>进阶版</h3>
+                    <p class="price">¥99</p>
+                    <p class="desc">多环境配置与自动化部署。</p>
+                    <span class="tag tag-ok">在售</span>
+                </article>
+                <article class="product-card">
+                    <h3>专业版</h3>
+                    <p class="price">¥299</p>
+                    <p class="desc">性能优化与高并发方案。</p>
+                    <span class="tag tag-warn">预售</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>六、深色模式的两种写法</h2>
+            <dl>
+                <dt>媒体查询方式</dt>
+                <dd>跟随系统，用户无法手动切换；适合纯展示站。</dd>
+
+                <dt>类名切换方式</dt>
+                <dd>在 <code>html</code> 上加 <code>data-theme="dark"</code>，用户可手动选；需要把选择存进 localStorage。</dd>
+
+                <dt>两种结合（本项目）</dt>
+                <dd>默认跟随系统，用户手动选过就听用户的。注意要处理「系统切换但用户已手动选择」的情况，别把用户的选择覆盖掉。</dd>
+            </dl>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 3 章 · 页面开发与交互 · 对应笔记 3.2</p>
+    </footer>
+
+    <script src="02-theme.js"></script>
+</body>
+</html>

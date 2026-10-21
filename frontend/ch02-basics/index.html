@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!-- ===== 第 2 章汇总页：串起 2.1 – 2.5 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第 2 章 · 前端基础 · 汇总示例</title>
+    <link rel="stylesheet" href="02-style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>我的笔记</h1>
+        <nav>
+            <a href="01-index.html">2.1 结构示例</a>
+            <a href="data/notes.json">模拟数据</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 2.4：表单 + 列表 + 事件 -->
+        <section class="card">
+            <h2>一、新增笔记</h2>
+            <p>对应笔记 2.4：表单提交、<code>createElement</code> 渲染、事件委托删除。</p>
+
+            <form id="noteForm">
+                <div class="field">
+                    <label for="noteInput">笔记内容</label>
+                    <input type="text" id="noteInput" placeholder="例如：CSS 变量改一处全站生效" autocomplete="off">
+                </div>
+                <button type="submit" class="btn">添加</button>
+            </form>
+
+            <p class="hint" id="countHint">共 0 条</p>
+            <ul class="note-list" id="noteList"></ul>
+        </section>
+
+        <!-- 2.5：fetch 读取静态 JSON -->
+        <section class="card">
+            <h2>二、远程笔记</h2>
+            <p>对应笔记 2.5：<code>fetch</code> 读取 <code>data/notes.json</code>，检查状态码并处理异常。</p>
+
+            <p class="hint" id="remoteHint">加载中…</p>
+            <ul class="note-list" id="remoteList"></ul>
+        </section>
+
+        <!-- 2.4 补充：显示与隐藏 -->
+        <section class="card">
+            <h2>三、显示与隐藏</h2>
+            <p>对应笔记 2.4 十、10.1。最简单的做法是切 <code>hidden</code> 属性；
+                需要过渡动画时改用 class + CSS。</p>
+
+            <button type="button" class="btn btn-ghost" id="toggleBtn"
+                    aria-expanded="true" aria-controls="togglePanel">收起面板</button>
+
+            <div class="demo-panel" id="togglePanel">
+                <p style="margin: 0;">这块内容可以收起和展开。
+                    注意 <code>aria-expanded</code> 必须同步 —— 读屏软件靠它判断当前是展开还是收起。</p>
+            </div>
+        </section>
+
+        <!-- 2.4 补充：实时搜索 -->
+        <section class="card">
+            <h2>四、实时搜索（基础版）</h2>
+            <p>对应笔记 2.4 十、10.3。每次输入都重新过滤一遍 —— 这是最直白的写法。
+                数据量大时要加防抖，见第 3 章 3.4。</p>
+
+            <div class="field">
+                <label for="searchInput">搜索本地笔记</label>
+                <input type="search" id="searchInput" placeholder="输入关键词…" autocomplete="off">
+            </div>
+
+            <p class="hint" id="searchHint">共 0 条</p>
+            <ul class="note-list" id="searchList"></ul>
+            <p class="hint" id="searchEmpty" hidden>没有匹配的笔记</p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 2 章 · 前端基础 · 原生 HTML / CSS / JavaScript，无框架、无构建工具</p>
+    </footer>
+
+    <!-- 2.3 只在控制台打印语法示例，不影响页面 -->
+    <script src="03-basics.js"></script>
+    <script src="04-dom.js"></script>
+    <script src="05-fetch.js"></script>
+</body>
+</html>

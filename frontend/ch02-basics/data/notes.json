@@ -1,0 +1,9 @@
+{
+  "items": [
+    { "id": "2.1", "title": "HTML 结构与常用标签", "chapter": "第 2 章" },
+    { "id": "2.2", "title": "CSS 基础", "chapter": "第 2 章" },
+    { "id": "2.3", "title": "JavaScript 核心语法", "chapter": "第 2 章" },
+    { "id": "2.4", "title": "DOM 操作与事件处理", "chapter": "第 2 章" },
+    { "id": "2.5", "title": "前后端数据交互初探（fetch）", "chapter": "第 2 章" }
+  ]
+}

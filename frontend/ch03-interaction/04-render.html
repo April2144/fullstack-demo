@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 3.4 动态交互与数据渲染 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3.4 动态交互与数据渲染</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>动态交互与数据渲染</h1>
+        <nav class="nav-bar">
+            <a href="index.html">返回汇总</a>
+            <a href="01-layout.html">页面布局</a>
+            <a href="02-theme.html">主题</a>
+            <a href="03-form.html">表单</a>
+            <a href="04-render.html" class="active">渲染</a>
+            <a href="05-responsive.html">响应式</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、搜索 / 筛选 / 排序 / 分页</h2>
+            <p>数据只拉一次，之后全部在前端内存里算。改条件只重渲染列表，不重新请求接口。</p>
+
+            <!-- 工具栏：搜索、分类、排序放一行，窄屏自动换行 -->
+            <div class="toolbar">
+                <input type="search" id="keyword" placeholder="搜索标题…" autocomplete="off">
+                <select id="category">
+                    <option value="">全部分类</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="js">JavaScript</option>
+                    <option value="fetch">数据交互</option>
+                </select>
+                <select id="sortBy">
+                    <option value="date-desc">最新优先</option>
+                    <option value="date-asc">最早优先</option>
+                    <option value="views-desc">浏览量最高</option>
+                </select>
+            </div>
+
+            <p class="hint" id="statusHint">加载中…</p>
+
+            <!-- 列表：内容由 JS 填充 -->
+            <ul class="note-list" id="itemList"></ul>
+
+            <!-- 空状态：没有匹配结果时显示 -->
+            <div class="empty is-hidden" id="emptyState">没有匹配的内容，换个关键词试试</div>
+
+            <!-- 分页：上一页 / 页码 / 下一页 -->
+            <div class="pager" id="pager"></div>
+        </section>
+
+        <section class="card">
+            <h2>二、渲染时最容易踩的两个坑</h2>
+            <dl>
+                <dt>用 innerHTML 拼用户输入</dt>
+                <dd>标题里只要有一个 <code>&lt;script&gt;</code> 或 <code>onerror</code>，就会被当成代码执行。
+                    本页全部用 <code>createElement</code> + <code>textContent</code>，
+                    搜索命中高亮也是拆成文本节点 + <code>mark</code> 元素，不用字符串拼接。</dd>
+
+                <dt>每加一条就 appendChild 一次</dt>
+                <dd>每次插入都可能触发布局计算。20 条感觉不出来，2000 条就卡了。
+                    本页先把所有节点塞进 <code>DocumentFragment</code>，最后一次性插入。</dd>
+            </dl>
+        </section>
+
+        <section class="card">
+            <h2>三、搜索为什么需要防抖</h2>
+            <p>每敲一个字符就搜一次，输入 "javascript" 会触发 10 次。
+                防抖把连续输入合并成一次：停止输入 250ms 后才真正执行。
+                打开控制台能看到实际执行次数。</p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 3 章 · 页面开发与交互 · 对应笔记 3.4</p>
+    </footer>
+
+    <script src="04-render.js"></script>
+</body>
+</html>

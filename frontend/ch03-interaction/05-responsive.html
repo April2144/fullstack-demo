@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 3.5 响应式设计与移动端适配 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 视口设置是响应式的前提，漏了这行手机上会按 980px 渲染再整体缩小 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3.5 响应式设计与移动端适配</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="05-responsive.css">
+</head>
+<body>
+    <!-- 页头：宽屏一行，窄屏标题 + 汉堡按钮一行，导航收起 -->
+    <header class="site-header">
+        <h1>响应式设计</h1>
+
+        <!-- 汉堡按钮：只在 ≤768px 显示，由 05-responsive.css 控制 -->
+        <button type="button" class="nav-toggle" id="navToggle"
+                aria-expanded="false" aria-controls="mainNav">☰ 菜单</button>
+
+        <nav class="nav-bar" id="mainNav">
+            <a href="index.html">返回汇总</a>
+            <a href="01-layout.html">页面布局</a>
+            <a href="02-theme.html">主题</a>
+            <a href="03-form.html">表单</a>
+            <a href="04-render.html">渲染</a>
+            <a href="05-responsive.html" class="active">响应式</a>
+        </nav>
+    </header>
+
+    <div class="layout">
+        <main class="layout-main">
+            <section class="card">
+                <h2>一、两栏变一栏</h2>
+                <p>宽屏时侧栏在右（固定 220px），平板及以下自动堆到正文下方。
+                    把浏览器窗口拖窄试试，不需要改任何 HTML。</p>
+
+                <div class="rwd-grid">
+                    <article class="card-item">
+                        <h3>3 列</h3>
+                        <p>宽度 &gt; 1024px</p>
+                    </article>
+                    <article class="card-item">
+                        <h3>2 列</h3>
+                        <p>601 ~ 1024px</p>
+                    </article>
+                    <article class="card-item">
+                        <h3>1 列</h3>
+                        <p>≤ 600px</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>二、媒体自适应</h2>
+                <p>图片要加 <code>max-width: 100%</code> 和 <code>height: auto</code>，
+                    两个都写才不会变形。需要固定比例时用 <code>aspect-ratio</code>，
+                    需要裁切时用 <code>object-fit: cover</code>。</p>
+
+                <!-- 用渐变块代替真实图片，避免示例依赖外部素材 -->
+                <div class="rwd-media"></div>
+                <p class="hint">aspect-ratio: 16 / 9 —— 高度由宽度自动算出</p>
+            </section>
+
+            <section class="card">
+                <h2>三、触控优化</h2>
+                <p>手指的点击精度远低于鼠标：可点区域至少 44×44，重要按钮别贴着屏幕边缘，<br>
+                    并且不要只依赖 <code>:hover</code> —— 手机上根本没有悬停状态。</p>
+
+                <div class="btn-row">
+                    <button type="button" class="btn">主操作</button>
+                    <button type="button" class="btn btn-ghost">次操作</button>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>四、常见测试尺寸</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>设备类型</th>
+                            <th>宽度</th>
+                            <th>关注点</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>小屏手机</td>
+                            <td>320 ~ 375px</td>
+                            <td>字号、按钮换行、横向滚动</td>
+                        </tr>
+                        <tr>
+                            <td>大屏手机</td>
+                            <td>390 ~ 430px</td>
+                            <td>导航收起、表单单列</td>
+                        </tr>
+                        <tr>
+                            <td>平板</td>
+                            <td>768 ~ 1024px</td>
+                            <td>两栏布局、卡片 2 列</td>
+                        </tr>
+                        <tr>
+                            <td>桌面</td>
+                            <td>1280px 以上</td>
+                            <td>内容最大宽度、留白节奏</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+
+        <aside class="layout-side">
+            <section class="card">
+                <h2>调试</h2>
+                <ul>
+                    <li>DevTools 开设备模拟</li>
+                    <li>拖动窗口看断点切换</li>
+                    <li>真机验证触控与安全区</li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+
+    <footer class="site-footer safe-bottom">
+        <p>第 3 章 · 页面开发与交互 · 对应笔记 3.5</p>
+    </footer>
+
+    <script>
+        // 移动端导航开合：只切一个 class，显隐交给 CSS
+        const navToggle = document.getElementById('navToggle');
+        const mainNav = document.getElementById('mainNav');
+
+        navToggle.addEventListener('click', () => {
+            const isOpen = mainNav.classList.toggle('is-open');
+            // aria-expanded 要同步，读屏软件靠它判断当前是展开还是收起
+            navToggle.setAttribute('aria-expanded', String(isOpen));
+            navToggle.textContent = isOpen ? '✕ 关闭' : '☰ 菜单';
+        });
+    </script>
+</body>
+</html>

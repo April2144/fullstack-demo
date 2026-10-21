@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 1.2 前后端职责与协作方式 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1.2 前后端职责与协作方式</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>前后端职责与协作方式</h1>
+        <nav>
+            <a href="index.html">总览</a>
+            <a href="01-request-flow.html">请求流程</a>
+            <a href="02-roles.html">前后端职责</a>
+            <a href="03-stack.html">技术栈</a>
+            <a href="04-env.html">环境搭建</a>
+            <a href="05-structure.html">项目结构</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、三层职责</h2>
+            <p>划分职责只有一条原则：<strong>谁的数据谁负责，谁的能力谁实现</strong>。
+                前端不该直接连数据库，后端也不该拼 HTML。</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>层</th>
+                        <th>该做的</th>
+                        <th>不该做的</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>前端</td>
+                        <td>页面结构、样式、交互、把接口数据渲染成界面</td>
+                        <td>直接连数据库、信任前端传来的任何数据</td>
+                    </tr>
+                    <tr>
+                        <td>后端</td>
+                        <td>业务规则、参数校验、权限判断、组织响应</td>
+                        <td>拼接页面 HTML、把数据库结构直接暴露给前端</td>
+                    </tr>
+                    <tr>
+                        <td>数据库</td>
+                        <td>存数据、保证一致性、按条件查询</td>
+                        <td>写业务逻辑、做权限判断</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>二、接口就是双方签的合同</h2>
+            <p>前后端各写各的，唯一的连接点是接口。接口定下来，两边才能并行开发。</p>
+
+            <p><strong>请求</strong>（前端 → 后端）：</p>
+            <pre class="tree">POST /api/notes
+Content-Type: application/json
+
+{
+  "title": "第一条笔记",
+  "body": "接口先定，再写实现"
+}</pre>
+
+            <p><strong>响应</strong>（后端 → 前端）：</p>
+            <pre class="tree">HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+  "code": 201,
+  "message": "创建成功",
+  "data": { "id": 1, "title": "第一条笔记" }
+}</pre>
+
+            <p>约定三件事：<strong>路径和方法</strong>（谁在什么地址干什么）、
+                <strong>字段名与类型</strong>（别一边叫 <code>title</code> 一边叫 <code>name</code>）、
+                <strong>错误怎么表达</strong>（HTTP 状态码 + 业务错误码）。</p>
+        </section>
+
+        <section class="card">
+            <h2>三、数据流的方向</h2>
+            <p>只有两个方向，记住这两条就不会绕晕：</p>
+
+            <div class="flow">
+                <div class="flow-step"><strong>读</strong><span>前端 → 后端 → 数据库 → 后端 → 前端</span></div>
+                <span class="flow-arrow">|</span>
+                <div class="flow-step"><strong>写</strong><span>前端提交 → 后端校验 → 数据库落库 → 返回结果</span></div>
+            </div>
+
+            <p><strong>写操作必须校验</strong>：前端校验是为了体验（即时提示），
+                后端校验是为了安全（前端校验可以被绕过）。两道都要有，不能只做一道。</p>
+        </section>
+
+        <section class="card">
+            <h2>四、联调时最容易吵起来的四件事</h2>
+            <ul class="checklist">
+                <li><span class="num-tag">1</span><label>字段名对不上 —— 前端按文档写，后端改了没同步</label></li>
+                <li><span class="num-tag">2</span><label>空值处理不一致 —— 后端返回 <code>null</code>，前端当字符串用了</label></li>
+                <li><span class="num-tag">3</span><label>跨域没配 —— 浏览器拦了请求，但后端日志里根本没有这条记录</label></li>
+                <li><span class="num-tag">4</span><label>错误码各写各的 —— 前端不知道该弹哪种提示</label></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 1 章 · 全栈开发概述与环境准备 · 对应笔记 1.2</p>
+    </footer>
+</body>
+</html>

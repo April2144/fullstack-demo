@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 1.4 开发环境搭建 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1.4 开发环境搭建</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>开发环境搭建</h1>
+        <nav>
+            <a href="index.html">总览</a>
+            <a href="01-request-flow.html">请求流程</a>
+            <a href="02-roles.html">前后端职责</a>
+            <a href="03-stack.html">技术栈</a>
+            <a href="04-env.html">环境搭建</a>
+            <a href="05-structure.html">项目结构</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、开发环境总览</h2>
+            <p>这一章要装的东西只有六样。装完能跑通一个 FastAPI 接口，环境就算齐了。</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>工具</th>
+                        <th>作用</th>
+                        <th>验证方式</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Python 3.10+</td>
+                        <td>跑后端服务</td>
+                        <td><code>python3 --version</code></td>
+                    </tr>
+                    <tr>
+                        <td>MySQL 8</td>
+                        <td>存数据</td>
+                        <td><code>mysql --version</code></td>
+                    </tr>
+                    <tr>
+                        <td>VS Code</td>
+                        <td>写代码</td>
+                        <td>能打开项目目录</td>
+                    </tr>
+                    <tr>
+                        <td>终端</td>
+                        <td>执行命令、起服务</td>
+                        <td>能跑 <code>pwd</code> / <code>ls</code></td>
+                    </tr>
+                    <tr>
+                        <td>Git</td>
+                        <td>版本管理</td>
+                        <td><code>git --version</code></td>
+                    </tr>
+                    <tr>
+                        <td>虚拟环境</td>
+                        <td>隔离项目依赖</td>
+                        <td><code>pip list</code> 只显示本项目的包</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>二、逐项检查清单</h2>
+            <p>边装边勾，全部勾上再往下走。这份清单在本地复现环境时同样适用。</p>
+
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="c1">
+                    <label for="c1"><strong>Python</strong>：<code>python3 --version</code> 输出 3.10 以上</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="c2">
+                    <label for="c2"><strong>pip</strong>：<code>python3 -m pip --version</code> 能正常输出版本</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="c3">
+                    <label for="c3"><strong>MySQL</strong>：<code>mysql --version</code> 有输出，且能登录</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="c4">
+                    <label for="c4"><strong>开发库</strong>：已创建 <code>site_db</code> 与专用账号（不直接用 root）</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="c5">
+                    <label for="c5"><strong>VS Code</strong>：已装 Python 插件，解释器选中项目虚拟环境</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="c6">
+                    <label for="c6"><strong>Git</strong>：<code>git --version</code> 有输出，<code>user.name</code> / <code>user.email</code> 已配置</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="c7">
+                    <label for="c7"><strong>虚拟环境</strong>：项目根目录有 <code>venv/</code>，激活后 <code>pip list</code> 是干净的</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="c8">
+                    <label for="c8"><strong>FastAPI</strong>：<code>pip install fastapi uvicorn</code> 后能起服务</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="c9">
+                    <label for="c9"><strong>联调验证</strong>：浏览器打开 <code>http://127.0.0.1:8000/docs</code> 能看到接口文档</label>
+                </li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2>三、虚拟环境：为什么必须用</h2>
+            <p>不同项目依赖的包版本可能冲突。装到全局，A 项目升级一个包，B 项目就跑不起来了。</p>
+
+            <pre class="tree"># 创建（项目根目录执行一次）
+python3 -m venv venv
+
+# 激活
+source venv/bin/activate        # macOS / Linux
+venv\Scripts\activate           # Windows
+
+# 装依赖并记录
+pip install fastapi uvicorn
+pip freeze > requirements.txt
+
+# 退出
+deactivate</pre>
+
+            <p class="hint">激活成功的标志：命令行提示符前面出现 <code>(venv)</code>。</p>
+        </section>
+
+        <section class="card">
+            <h2>四、.gitignore：别把环境和产物提交上去</h2>
+            <p>虚拟环境目录动辄几百 MB，还带着本机路径，绝对不进仓库。</p>
+
+            <pre class="tree"># 虚拟环境
+venv/
+.venv/
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 环境变量（含密码，绝不提交）
+.env
+
+# 编辑器
+.vscode/
+.idea/
+
+# 系统文件
+.DS_Store</pre>
+        </section>
+
+        <section class="card">
+            <h2>五、三个最常见的坑</h2>
+            <ul class="checklist">
+                <li><span class="num-tag">1</span><label>命令找不到 —— 装完没重开终端，PATH 没生效</label></li>
+                <li><span class="num-tag">2</span><label>端口被占用 —— 8000 被别的服务占了，换端口或先停掉旧进程</label></li>
+                <li><span class="num-tag">3</span><label>连不上数据库 —— 账号密码对，但库名写错或没建库</label></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 1 章 · 全栈开发概述与环境准备 · 对应笔记 1.4</p>
+    </footer>
+</body>
+</html>

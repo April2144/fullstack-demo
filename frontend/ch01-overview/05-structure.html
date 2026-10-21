@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 1.5 第一个全栈项目结构预览 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1.5 第一个全栈项目结构预览</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>第一个全栈项目结构预览</h1>
+        <nav>
+            <a href="index.html">总览</a>
+            <a href="01-request-flow.html">请求流程</a>
+            <a href="02-roles.html">前后端职责</a>
+            <a href="03-stack.html">技术栈</a>
+            <a href="04-env.html">环境搭建</a>
+            <a href="05-structure.html">项目结构</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、一个全栈项目由什么组成</h2>
+            <p>四块内容 + 一个根目录。先把地盘划清楚，后面写代码才知道该放哪。</p>
+
+            <div class="flow">
+                <div class="flow-step"><strong>前端</strong><span>页面与交互</span></div>
+                <span class="flow-arrow">+</span>
+                <div class="flow-step"><strong>后端</strong><span>接口与业务</span></div>
+                <span class="flow-arrow">+</span>
+                <div class="flow-step"><strong>数据库</strong><span>表结构与数据</span></div>
+                <span class="flow-arrow">+</span>
+                <div class="flow-step"><strong>文档</strong><span>接口与部署说明</span></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>二、推荐的目录结构</h2>
+            <p>分层的目的是<strong>能一眼看出某个文件属于哪一层</strong>。改需求时不用满仓库找。</p>
+
+            <pre class="tree">my-fullstack-app/
+├── frontend/                 <span class="dim"># 前端：静态文件，直接由 Nginx 托管</span>
+│   ├── index.html
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── api.js            <span class="dim"># 所有请求集中在这里，别散落在各页面</span>
+│   │   └── main.js
+│   └── data/                 <span class="dim"># 开发期的模拟数据</span>
+│
+├── backend/                  <span class="dim"># 后端：FastAPI 应用</span>
+│   ├── main.py               <span class="dim"># 入口：创建 app、挂路由</span>
+│   ├── routers/              <span class="dim"># 路由层：只负责收参数、返回响应</span>
+│   ├── services/             <span class="dim"># 业务层：真正的逻辑</span>
+│   ├── models/               <span class="dim"># 数据模型：表结构定义</span>
+│   └── core/
+│       └── config.py         <span class="dim"># 配置：数据库连接、密钥</span>
+│
+├── database/
+│   ├── schema.sql            <span class="dim"># 建表语句，可版本化</span>
+│   └── seed.sql              <span class="dim"># 初始数据</span>
+│
+├── docs/                     <span class="dim"># 接口文档、部署说明</span>
+│
+├── .env                      <span class="dim"># 环境变量，不进 Git</span>
+├── .gitignore
+├── requirements.txt
+└── README.md</pre>
+        </section>
+
+        <section class="card">
+            <h2>三、每层该放什么、不该放什么</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>目录</th>
+                        <th>放什么</th>
+                        <th>别放什么</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>frontend/js/api.js</code></td>
+                        <td>所有 <code>fetch</code> 调用、统一的错误处理</td>
+                        <td>页面渲染代码、DOM 操作</td>
+                    </tr>
+                    <tr>
+                        <td><code>backend/routers/</code></td>
+                        <td>路径定义、参数声明、调用 service</td>
+                        <td>复杂业务逻辑、直接写 SQL</td>
+                    </tr>
+                    <tr>
+                        <td><code>backend/services/</code></td>
+                        <td>业务规则、事务、多个模型协同</td>
+                        <td>HTTP 相关的东西（状态码、请求对象）</td>
+                    </tr>
+                    <tr>
+                        <td><code>backend/models/</code></td>
+                        <td>表结构、字段类型、关系</td>
+                        <td>业务判断、接口返回格式</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>四、最小可运行项目</h2>
+            <p>下面这份代码不到 30 行，但已经是一条完整链路：浏览器 → FastAPI → 返回 JSON。
+                先跑通它，再往上加功能。</p>
+
+            <p><strong>backend/main.py</strong></p>
+            <pre class="tree">from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI(title="我的第一个全栈应用")
+
+# 开发期前后端分开跑（端口不同），必须允许跨域
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:8080"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/api/hello")
+def hello():
+    return {"code": 200, "message": "接口通了", "data": {"name": "全栈"}}</pre>
+
+            <p><strong>frontend/index.html</strong></p>
+            <pre class="tree">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;body&gt;
+  &lt;button id="btn"&gt;请求接口&lt;/button&gt;
+  &lt;p id="out"&gt;&lt;/p&gt;
+
+  &lt;script&gt;
+    document.getElementById('btn').addEventListener('click', async () =&gt; {
+      const res = await fetch('http://127.0.0.1:8000/api/hello');
+      const json = await res.json();
+      document.getElementById('out').textContent = json.message;
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+            <p><strong>运行</strong></p>
+            <pre class="tree"># 后端（项目根目录）
+uvicorn backend.main:app --reload --port 8000
+
+# 前端（另开一个终端）
+cd frontend
+python3 -m http.server 8080</pre>
+
+            <p>打开 <code>http://127.0.0.1:8080</code>，点按钮出现「接口通了」，说明前端、后端、跨域三件事都通了。</p>
+        </section>
+
+        <section class="card">
+            <h2>五、后续扩展方向</h2>
+            <ul class="checklist">
+                <li><span class="num-tag">1</span><label>把 <code>main.py</code> 拆成 routers / services / models 三层</label></li>
+                <li><span class="num-tag">2</span><label>加数据库：models 定义表，service 里写查询</label></li>
+                <li><span class="num-tag">3</span><label>加配置层：数据库地址、密钥从 <code>.env</code> 读</label></li>
+                <li><span class="num-tag">4</span><label>加部署：Nginx 托管前端、反向代理后端</label></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 1 章 · 全栈开发概述与环境准备 · 对应笔记 1.5</p>
+    </footer>
+</body>
+</html>

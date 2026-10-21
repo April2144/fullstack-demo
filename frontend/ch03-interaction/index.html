@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!-- ===== 第 3 章汇总页：3.1 – 3.5 入口 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第 3 章 · 页面开发与交互 · 汇总</title>
+
+    <!-- 与 02-theme.html 同款防闪烁：先定主题，再加载样式 -->
+    <script>
+        (function () {
+            var saved = localStorage.getItem('demo-theme');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.dataset.theme = saved || (prefersDark ? 'dark' : 'light');
+        })();
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="02-theme.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>第 3 章 · 页面开发与交互</h1>
+        <div class="btn-row">
+            <a href="../ch02-basics/index.html" class="btn btn-ghost">← 第 2 章</a>
+            <button type="button" class="theme-toggle" id="themeToggle">切换主题</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>本章示例</h2>
+            <p>五节各是一个独立页面，可以直接打开看效果；全部用原生 HTML / CSS / JS，无框架、无构建工具。</p>
+
+            <div class="card-grid">
+                <article class="card-item">
+                    <h3>3.1 页面布局实战</h3>
+                    <p>页头 / 主体 / 侧栏 / 页脚骨架，卡片网格与操作列表。</p>
+                    <p style="margin-top: var(--space-3);">
+                        <a href="01-layout.html">打开 01-layout.html →</a>
+                    </p>
+                </article>
+
+                <article class="card-item">
+                    <h3>3.2 样式与主题设计</h3>
+                    <p>CSS 变量、配色 / 字号 / 间距体系、深色模式与主题切换。</p>
+                    <p style="margin-top: var(--space-3);">
+                        <a href="02-theme.html">打开 02-theme.html →</a>
+                    </p>
+                </article>
+
+                <article class="card-item">
+                    <h3>3.3 表单与用户输入</h3>
+                    <p>12 种输入控件、失焦校验、错误提示、字符计数、密码可见。</p>
+                    <p style="margin-top: var(--space-3);">
+                        <a href="03-form.html">打开 03-form.html →</a>
+                    </p>
+                </article>
+
+                <article class="card-item">
+                    <h3>3.4 动态交互与数据渲染</h3>
+                    <p>列表渲染、搜索防抖、筛选、排序、分页、空/加载状态。</p>
+                    <p style="margin-top: var(--space-3);">
+                        <a href="04-render.html">打开 04-render.html →</a>
+                    </p>
+                </article>
+
+                <article class="card-item">
+                    <h3>3.5 响应式设计与移动端适配</h3>
+                    <p>断点、流式布局、移动导航、触控优化、安全区域。</p>
+                    <p style="margin-top: var(--space-3);">
+                        <a href="05-responsive.html">打开 05-responsive.html →</a>
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>文件说明</h2>
+            <dl>
+                <dt>style.css</dt>
+                <dd>本章公共样式：以第 2 章样式为基线复制，再追加第 3 章组件（导航、网格、分页、开关等）。</dd>
+
+                <dt>02-theme.css</dt>
+                <dd>主题层：只覆盖 CSS 变量，不改任何选择器。必须放在 style.css 之后引入。</dd>
+
+                <dt>data/items.json</dt>
+                <dd>3.4 的模拟数据，20 条。通过 <code>fetch</code> 读取，需用 HTTP 打开。</dd>
+            </dl>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 3 章 · 页面开发与交互 · 原生 HTML / CSS / JavaScript</p>
+    </footer>
+
+    <script src="02-theme.js"></script>
+</body>
+</html>

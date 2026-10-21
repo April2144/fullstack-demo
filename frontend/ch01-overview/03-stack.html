@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 1.3 技术栈选型：前端、后端、数据库怎么选 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1.3 技术栈选型</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>技术栈选型</h1>
+        <nav>
+            <a href="index.html">总览</a>
+            <a href="01-request-flow.html">请求流程</a>
+            <a href="02-roles.html">前后端职责</a>
+            <a href="03-stack.html">技术栈</a>
+            <a href="04-env.html">环境搭建</a>
+            <a href="05-structure.html">项目结构</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、本专题的技术栈</h2>
+            <p>三个模块各选一样，全套只用这四样东西，不加别的。</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>模块</th>
+                        <th>职责</th>
+                        <th>本专题选型</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>前端</td>
+                        <td>页面展示与用户交互</td>
+                        <td>HTML / CSS / JavaScript</td>
+                    </tr>
+                    <tr>
+                        <td>后端</td>
+                        <td>业务逻辑与接口</td>
+                        <td>Python + FastAPI</td>
+                    </tr>
+                    <tr>
+                        <td>数据库</td>
+                        <td>数据存储与管理</td>
+                        <td>MySQL</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>二、前端：为什么不选框架</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>方案</th>
+                        <th>特点</th>
+                        <th>适合场景</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>原生 HTML/CSS/JS</strong></td>
+                        <td>无框架依赖，浏览器直接运行，不需要构建</td>
+                        <td>内容站、CMS、后台管理</td>
+                    </tr>
+                    <tr>
+                        <td>React</td>
+                        <td>组件化，生态庞大</td>
+                        <td>大型 SPA、复杂交互</td>
+                    </tr>
+                    <tr>
+                        <td>Vue</td>
+                        <td>上手简单，渐进式</td>
+                        <td>中小型项目、快速开发</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>选原生的四条理由：</strong>无构建步骤（不需要 Vite / Webpack）；
+                学习路径清晰（先掌握 Web 基础，再学框架）；完全可控（每个标签每行逻辑都看得见）；
+                部署简单（静态文件直接放服务器）。</p>
+
+            <p><strong>什么时候该换框架：</strong>需要复杂单页应用交互、需要大量现成 UI 组件、
+                多人协作需要统一组件规范、需要路由/状态管理等完整方案。本专题面向个人站与 CMS，不在这个范围。</p>
+        </section>
+
+        <section class="card">
+            <h2>三、后端：为什么是 FastAPI</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>语言</th>
+                        <th>代表框架</th>
+                        <th>特点</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>JavaScript</td>
+                        <td>Node.js / Express</td>
+                        <td>前后端同语言</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Python</strong></td>
+                        <td>Flask / Django / <strong>FastAPI</strong></td>
+                        <td>语法清晰，生态成熟</td>
+                    </tr>
+                    <tr>
+                        <td>Java</td>
+                        <td>Spring Boot</td>
+                        <td>企业级，稳定</td>
+                    </tr>
+                    <tr>
+                        <td>Go</td>
+                        <td>Gin</td>
+                        <td>高并发，性能好</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>框架</th>
+                        <th>特点</th>
+                        <th>适合场景</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Flask</td>
+                        <td>轻量，灵活</td>
+                        <td>小型项目、快速原型</td>
+                    </tr>
+                    <tr>
+                        <td>Django</td>
+                        <td>全功能，自带 ORM 和 Admin</td>
+                        <td>中大型项目、内容站</td>
+                    </tr>
+                    <tr>
+                        <td><strong>FastAPI</strong></td>
+                        <td>异步，类型安全，自动生成文档</td>
+                        <td>API 服务、现代项目</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>FastAPI 的取舍：</strong>自动生成 Swagger UI 与 ReDoc、Pydantic 自动校验、
+                原生 async/await、代码量少。代价是生态不如 Django 成熟、没有自带后台管理、
+                ORM 与迁移工具要另外选。</p>
+        </section>
+
+        <section class="card">
+            <h2>四、数据库：为什么是 MySQL</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>数据库</th>
+                        <th>特点</th>
+                        <th>适合场景</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MySQL</strong></td>
+                        <td>成熟稳定，资料多</td>
+                        <td>大多数 Web 项目</td>
+                    </tr>
+                    <tr>
+                        <td>PostgreSQL</td>
+                        <td>功能强大，支持复杂查询</td>
+                        <td>数据复杂、需要高级功能</td>
+                    </tr>
+                    <tr>
+                        <td>SQLite</td>
+                        <td>轻量，单文件</td>
+                        <td>小型项目、本地存储</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>选 MySQL 是因为成熟稳定、资料丰富、适合中小型项目，
+                并且云服务器上装起来最省事。SQLite 虽然零配置，但不适合多用户并发的线上服务。</p>
+        </section>
+
+        <section class="card">
+            <h2>五、技术选型的判断标准</h2>
+            <p>不要按「哪个火」来选，按这四条来选：</p>
+
+            <ul class="checklist">
+                <li><span class="num-tag">1</span><label>项目真的需要它吗 —— 不需要的能力就是负担</label></li>
+                <li><span class="num-tag">2</span><label>团队（目前就是你自己）能维护吗 —— 学不动的技术等于负债</label></li>
+                <li><span class="num-tag">3</span><label>出问题能查到资料吗 —— 生态比性能更影响开发速度</label></li>
+                <li><span class="num-tag">4</span><label>部署成本可接受吗 —— 多一个组件就多一处可能挂的地方</label></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 1 章 · 全栈开发概述与环境准备 · 对应笔记 1.3</p>
+    </footer>
+</body>
+</html>

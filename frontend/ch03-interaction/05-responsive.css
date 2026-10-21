@@ -1,0 +1,162 @@
+/* ===== 对应笔记 3.5 响应式设计与移动端适配 ===== */
+/* 本文件只放「随屏幕变化」的规则，基础样式在 style.css。
+   断点只用三个：≤600 手机 / 601–1024 平板 / >1024 桌面。断点越多越难维护。 */
+
+/* ---------- 一、两栏变一栏 ---------- */
+/* 桌面：主体 + 侧栏左右排；平板以下：上下堆叠 */
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+    /* 侧栏从「固定 220px」改成「占满一行」 */
+    .layout-side {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}
+
+/* ---------- 二、网格列数随屏递减 ---------- */
+.rwd-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+}
+
+@media (max-width: 1024px) {
+    .rwd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+    .rwd-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- 三、流式图片 ---------- */
+/* max-width:100% 保证不撑破容器；height:auto 保持比例，缺一个都会变形 */
+.rwd-img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+}
+
+/* 固定比例的占位块：用 aspect-ratio 代替 padding-top 黑魔法 */
+.rwd-media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--color-primary-weak), var(--color-border));
+}
+
+/* 需要裁切时用 object-fit，别用 background-size 兜 */
+.rwd-cover {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+/* ---------- 四、移动端导航 ---------- */
+/* 桌面不显示汉堡按钮 */
+.nav-toggle {
+    display: none;
+    padding: 6px 12px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--color-text);
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    /* 页头改成纵向：标题一行，按钮一行 */
+    .site-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .nav-toggle { display: inline-flex; }
+
+    /* 默认收起，点开才显示 */
+    .nav-bar {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        margin-top: var(--space-3);
+        border-top: 1px solid var(--color-border);
+    }
+
+    .nav-bar.is-open { display: flex; }
+
+    .nav-bar a {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .nav-bar a:last-child { border-bottom: none; }
+}
+
+/* ---------- 五、触控优化 ---------- */
+/* pointer: coarse 表示手指操作（手机/平板），鼠标设备不匹配 */
+@media (pointer: coarse) {
+    /* 手指点击目标不小于 44×44，这是 iOS 人机指南给的底线 */
+    .btn,
+    .pager button,
+    .theme-toggle {
+        min-height: 44px;
+    }
+
+    /* 去掉移动端点击时的灰色高亮块 */
+    .nav-bar a,
+    .btn,
+    .pager button {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* 触控反馈：按下时轻微变暗，比 hover 更可靠（手机没有 hover） */
+.btn:active { filter: brightness(.94); }
+
+/* ---------- 六、字号与间距随屏收窄 ---------- */
+@media (max-width: 600px) {
+    body {
+        padding: var(--space-3);
+        /* 手机上正文不小于 16px，否则 iOS 会对小字号页面自动放大 */
+        font-size: 16px;
+    }
+
+    h1 { font-size: 20px; }
+    h2 { font-size: 17px; }
+
+    .card {
+        padding: var(--space-4);
+        border-radius: 8px;
+    }
+
+    .form-grid {
+        grid-template-columns: minmax(0, 1fr);   /* 两列表单在手机上变一列 */
+    }
+
+    .toolbar input,
+    .toolbar select {
+        width: 100%;
+    }
+}
+
+/* ---------- 七、刘海屏安全区域 ---------- */
+/* 底部固定操作栏要避开 iPhone 的横条 */
+.safe-bottom {
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+}
+
+/* ---------- 八、横屏时压缩纵向留白 ---------- */
+@media (max-height: 480px) and (orientation: landscape) {
+    body { padding-top: var(--space-2); }
+    .site-header { margin-bottom: var(--space-3); }
+}
