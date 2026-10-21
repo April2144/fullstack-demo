@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 4.1 项目目录结构设计 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4.1 项目目录结构设计</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>项目目录结构设计</h1>
+        <nav class="nav-bar">
+            <a href="index.html">返回汇总</a>
+            <a href="01-structure.html" class="active">目录结构</a>
+            <a href="02-assets.html">静态资源</a>
+            <a href="03-modules/index.html">模块化</a>
+            <a href="04-build/04-build.html">构建压缩</a>
+            <a href="05-config/05-env.html">配置管理</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、为什么前端也要分层</h2>
+            <p>页面少的时候随便放都能跑。页面一多，问题就来了：改一个按钮样式，要在十几个 html 里找；
+                接口地址变了，要全仓库搜索替换。</p>
+
+            <p>分层的唯一目的：<strong>能一眼看出某个文件属于哪一层</strong>，改需求时知道该改哪、不该改哪。</p>
+        </section>
+
+        <section class="card">
+            <h2>二、推荐目录结构</h2>
+
+            <pre class="tree">frontend/
+├── index.html              <span class="dim"># 入口页</span>
+├── pages/                  <span class="dim"># 页面层：只组装，不写业务细节</span>
+│   ├── home.html
+│   ├── list.html
+│   └── detail.html
+├── components/             <span class="dim"># 组件层：可复用的小块</span>
+│   ├── header.html
+│   ├── card.html
+│   └── pager.html
+├── js/
+│   ├── api/                <span class="dim"># 接口层：所有请求集中在这里</span>
+│   │   ├── request.js      <span class="dim"># 统一封装 fetch</span>
+│   │   └── notes.js        <span class="dim"># 具体业务接口</span>
+│   ├── pages/              <span class="dim"># 页面逻辑：一个页面对应一个文件</span>
+│   │   ├── home.js
+│   │   └── list.js
+│   └── utils/              <span class="dim"># 工具层：纯函数，不依赖 DOM</span>
+│       ├── format.js
+│       └── dom.js
+├── css/
+│   ├── base.css            <span class="dim"># 重置 + 变量</span>
+│   ├── components.css      <span class="dim"># 组件样式</span>
+│   └── pages.css           <span class="dim"># 页面专属样式</span>
+└── assets/                 <span class="dim"># 图片、字体等静态资源</span>
+    ├── img/
+    └── fonts/</pre>
+        </section>
+
+        <section class="card">
+            <h2>三、四层职责与依赖方向</h2>
+            <p>依赖只能从上往下，不能反向 —— 这是分层能不能立住的关键。</p>
+
+            <div class="modules">
+                <span class="module">pages</span>
+                <span>→</span>
+                <span class="module">components</span>
+                <span>→</span>
+                <span class="module">api</span>
+                <span>→</span>
+                <span class="module">utils</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>层</th>
+                        <th>只做</th>
+                        <th>绝不做</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>pages</code></td>
+                        <td>组装组件、绑定本页事件、调 api</td>
+                        <td>写通用工具函数、拼 SQL 式的请求细节</td>
+                    </tr>
+                    <tr>
+                        <td><code>components</code></td>
+                        <td>渲染一小块 UI、暴露参数</td>
+                        <td>直接发请求、依赖某个具体页面</td>
+                    </tr>
+                    <tr>
+                        <td><code>api</code></td>
+                        <td>拼 URL、发送请求、统一错误处理</td>
+                        <td>操作 DOM、弹提示框</td>
+                    </tr>
+                    <tr>
+                        <td><code>utils</code></td>
+                        <td>纯函数：格式化、校验、转换</td>
+                        <td>发请求、读写 localStorage</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>为什么 <code>utils</code> 不能发请求？</strong>因为一旦它发请求，就再也测不了 ——
+                纯函数给输入就该出输出，不依赖网络。</p>
+        </section>
+
+        <section class="card">
+            <h2>四、就近原则：什么时候不该分层</h2>
+            <p>只有一处用到的东西，不要提前抽成"通用模块"。</p>
+
+            <div class="split-2">
+                <div class="panel">
+                    <h3>该抽出去</h3>
+                    <ul>
+                        <li>三个页面都在用的日期格式化</li>
+                        <li>每个请求都要带的 token 头</li>
+                        <li>反复出现的卡片结构</li>
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h3>不该抽出去</h3>
+                    <ul>
+                        <li>只在一个页面用一次的格式化逻辑</li>
+                        <li>只有两个字段的"工具类"</li>
+                        <li>为了"看起来专业"而建的抽象层</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="hint">判断标准：<strong>能说出第二个使用场景，才值得抽</strong>。说不出来就先放在用它的地方。</p>
+        </section>
+
+        <section class="card">
+            <h2>五、三个常见反例</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="badge badge-warn">反例 1</span>
+                    <label>所有 js 平铺在一个目录 —— 20 个文件后没人知道 <code>main2.js</code> 是干什么的</label>
+                </li>
+                <li>
+                    <span class="badge badge-warn">反例 2</span>
+                    <label>每个页面各自写一份 <code>fetch</code> —— 改接口地址要改十几处，还漏掉两处</label>
+                </li>
+                <li>
+                    <span class="badge badge-warn">反例 3</span>
+                    <label>utils 里塞业务逻辑 —— 最后 utils 变成第二个"什么都往里扔"的目录</label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 4 章 · 前端工程化 · 对应笔记 4.1</p>
+    </footer>
+</body>
+</html>

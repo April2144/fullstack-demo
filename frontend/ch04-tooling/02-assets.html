@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 4.2 静态资源管理 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4.2 静态资源管理</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 带版本号引入：v1 -->
+    <link rel="stylesheet" href="assets/theme-v1.css?v=1" id="themeLink">
+    <style>
+        /* 本页专属：把主题变量用在可见元素上，方便肉眼看出 v1 / v2 的区别 */
+        .accent-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 72px;
+            margin-top: var(--space-3);
+            font-size: 14px;
+            color: #fff;
+            background: var(--demo-accent, #94a3b8);
+            border-radius: var(--radius);
+            transition: background .25s;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <h1>静态资源管理</h1>
+        <nav class="nav-bar">
+            <a href="index.html">返回汇总</a>
+            <a href="01-structure.html">目录结构</a>
+            <a href="02-assets.html" class="active">静态资源</a>
+            <a href="03-modules/index.html">模块化</a>
+            <a href="04-build/04-build.html">构建压缩</a>
+            <a href="05-config/05-env.html">配置管理</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、资源怎么分类</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>类型</th>
+                        <th>放哪</th>
+                        <th>注意</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CSS / JS</td>
+                        <td><code>css/</code> <code>js/</code></td>
+                        <td>改版频繁，必须带版本号</td>
+                    </tr>
+                    <tr>
+                        <td>图片</td>
+                        <td><code>assets/img/</code></td>
+                        <td>按用途分目录（icon / cover / avatar），别全堆一起</td>
+                    </tr>
+                    <tr>
+                        <td>字体</td>
+                        <td><code>assets/fonts/</code></td>
+                        <td>体积大，只引入真正用到的字重</td>
+                    </tr>
+                    <tr>
+                        <td>用户上传</td>
+                        <td><code>uploads/</code>（后端）</td>
+                        <td>与代码分开，不进 Git，路径由后端签发</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>二、核心问题：浏览器不肯重新下载</h2>
+            <p>静态资源响应头通常带 <code>Cache-Control: max-age=31536000</code>（一年）。
+                好处是第二次打开飞快；坏处是你改了 CSS，用户看到的还是旧的。</p>
+
+            <p><strong>解法不是缩短缓存时间</strong>（那等于放弃缓存），
+                而是<strong>改 URL</strong>：URL 一变，浏览器就认为这是一个全新文件。</p>
+
+            <pre class="tree">&lt;!-- 改之前 --&gt;
+&lt;link rel="stylesheet" href="style.css"&gt;
+
+&lt;!-- 改之后：加版本号，缓存立刻失效 --&gt;
+&lt;link rel="stylesheet" href="style.css?v=20261021"&gt;</pre>
+
+            <h3>点一下试试</h3>
+            <p>当前加载：<span class="badge" id="currentVer">theme-v1.css?v=1</span></p>
+            <div class="btn-row">
+                <button type="button" class="btn" id="switchBtn">切到 v2（带 ?v=2）</button>
+                <button type="button" class="btn btn-ghost" id="resetBtn">切回 v1</button>
+            </div>
+
+            <div class="accent-box" id="accentBox">这块颜色来自 theme-v*.css</div>
+
+            <p class="hint" style="margin-top: var(--space-3);">
+                打开开发者工具 → Network → 勾选 Disable cache 关掉，再点按钮：
+                能看到 <code>theme-v2.css?v=2</code> 是一次<strong>新的请求</strong>（状态 200，不是 304 或 memory cache）。
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>三、版本号的三种写法</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>写法</th>
+                        <th>例子</th>
+                        <th>适用</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>时间戳</td>
+                        <td><code>?v=202610211530</code></td>
+                        <td>手动更新，最简单，但每次都要改</td>
+                    </tr>
+                    <tr>
+                        <td>内容哈希</td>
+                        <td><code>?v=a3f9c1</code></td>
+                        <td>构建工具自动生成，内容不变哈希不变，缓存命中率最高</td>
+                    </tr>
+                    <tr>
+                        <td>发布版本号</td>
+                        <td><code>?v=1.4.2</code></td>
+                        <td>整站一次发布，配置简单，粒度较粗</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>本仓库不引入构建工具，所以用「手动版本号」；用 Vite / Webpack 的项目会自动生成内容哈希。</p>
+        </section>
+
+        <section class="card">
+            <h2>四、Nginx 里的缓存策略</h2>
+            <p>原则：<strong>带哈希的静态资源长缓存，HTML 永不缓存</strong>。</p>
+
+            <pre class="tree"># HTML：不缓存，保证用户总能拿到最新的资源引用
+location ~* \.html$ {
+    add_header Cache-Control "no-cache";
+}
+
+# 带版本号的静态资源：缓存一年
+location ~* \.(css|js|woff2|png|jpg|svg)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+}</pre>
+
+            <p><code>immutable</code> 的意思是「这个 URL 的内容永不改变」，浏览器连条件请求都不会发，省一次往返。</p>
+
+            <p><strong>前提</strong>：URL 里必须带版本号或哈希。否则改了文件、URL 没变，用户一年都看不到新版。</p>
+        </section>
+
+        <section class="card">
+            <h2>五、三个容易踩的坑</h2>
+            <ul class="checklist">
+                <li><span class="badge badge-warn">坑 1</span><label>只给 CSS 加版本号，忘了 JS —— 结果样式更新了、逻辑还是旧的</label></li>
+                <li><span class="badge badge-warn">坑 2</span><label>HTML 也长缓存 —— 用户连新的 <code>?v=</code> 都拿不到，永远看不到更新</label></li>
+                <li><span class="badge badge-warn">坑 3</span><label>图片改了内容但没改文件名 —— 最隐蔽，页面上就是旧图</label></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 4 章 · 前端工程化 · 对应笔记 4.2</p>
+    </footer>
+
+    <script>
+        // 只做一件事：换 link 的 href（连 ?v= 一起换），让浏览器重新请求
+        const themeLink = document.getElementById('themeLink');
+        const currentVer = document.getElementById('currentVer');
+        const accentBox = document.getElementById('accentBox');
+
+        function loadTheme(version) {
+            // 关键：文件名和 ?v= 同时变，双重保证缓存失效
+            themeLink.href = `assets/theme-v${version}.css?v=${version}`;
+            currentVer.textContent = `theme-v${version}.css?v=${version}`;
+            accentBox.textContent = `已加载 v${version}，颜色来自 theme-v${version}.css`;
+        }
+
+        document.getElementById('switchBtn').addEventListener('click', () => loadTheme(2));
+        document.getElementById('resetBtn').addEventListener('click', () => loadTheme(1));
+    </script>
+</body>
+</html>

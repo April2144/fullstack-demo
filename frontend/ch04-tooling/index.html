@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!-- ===== 第 4 章汇总页：4.1 – 4.5 入口 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第 4 章 · 前端工程化 · 汇总</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>第 4 章 · 前端工程化</h1>
+        <nav class="nav-bar">
+            <a href="../ch03-interaction/index.html">← 第 3 章</a>
+            <a href="01-structure.html">目录结构</a>
+            <a href="02-assets.html">静态资源</a>
+            <a href="03-modules/index.html">模块化</a>
+            <a href="04-build/04-build.html">构建压缩</a>
+            <a href="05-config/05-env.html">配置管理</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>本章示例</h2>
+            <p>五节各是一个独立页面，从「文件怎么放」讲到「代码怎么发到线上」。
+                除 4.4 的构建脚本外，全部是原生 HTML / CSS / JavaScript。</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>小节</th>
+                        <th>页面</th>
+                        <th>看什么</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>4.1 项目目录结构设计</td>
+                        <td><a href="01-structure.html">01-structure.html</a></td>
+                        <td>四层职责、依赖方向、就近原则、三个常见反例</td>
+                    </tr>
+                    <tr>
+                        <td>4.2 静态资源管理</td>
+                        <td><a href="02-assets.html">02-assets.html</a></td>
+                        <td>资源分类、目录约定、版本号 / 内容哈希与缓存</td>
+                    </tr>
+                    <tr>
+                        <td>4.3 代码规范与模块化</td>
+                        <td><a href="03-modules/index.html">03-modules/index.html</a></td>
+                        <td>ES Module 四种导入写法、运行时真实加载的三个文件</td>
+                    </tr>
+                    <tr>
+                        <td>4.4 构建与压缩</td>
+                        <td><a href="04-build/04-build.html">04-build/04-build.html</a></td>
+                        <td>几十行脚本实现合并 + 压缩，实测体积减少 47.8%</td>
+                    </tr>
+                    <tr>
+                        <td>4.5 配置管理</td>
+                        <td><a href="05-config/05-env.html">05-config/05-env.html</a></td>
+                        <td>一套配置三种环境，现场切换；密钥为什么不能放前端</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>怎么跑</h2>
+
+            <pre class="tree">cd frontend/ch04-tooling
+python3 -m http.server 8082
+# 打开 http://localhost:8082</pre>
+
+            <ul class="checklist">
+                <li>
+                    <span class="badge">1</span>
+                    <label><strong>4.3 必须走 HTTP</strong>：<code>type="module"</code> 在 <code>file://</code> 下会被 CORS 拦掉</label>
+                </li>
+                <li>
+                    <span class="badge">2</span>
+                    <label><strong>4.4 先构建再看</strong>：<code>node build.mjs</code> 生成 <code>dist/</code>，否则页面上只有一行提示</label>
+                </li>
+                <li>
+                    <span class="badge">3</span>
+                    <label>4.1 / 4.2 / 4.5 直接双击也能看，但统一用 HTTP 打开最省事</label>
+                </li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2>文件说明</h2>
+            <dl>
+                <dt>style.css</dt>
+                <dd>本章公共样式：以第 2 章样式为基线，追加导航、体积对比、模块关系、产物目录对照等组件。</dd>
+
+                <dt>03-modules/js/</dt>
+                <dd>4.3 的三个模块：<code>main.js</code> 入口、<code>api.js</code> 请求、<code>utils.js</code> 纯函数。</dd>
+
+                <dt>04-build/build.mjs</dt>
+                <dd>4.4 的构建脚本，零依赖。只做合并 + 去注释 + 压空白，对应构建工具最核心的两个动作。</dd>
+
+                <dt>04-build/dist/</dt>
+                <dd>构建产物，<strong>不要手改</strong>：每次 <code>node build.mjs</code> 都会整个覆盖。</dd>
+
+                <dt>05-config/config.js</dt>
+                <dd>4.5 的环境配置表与环境判定；<code>env.js</code> 只负责渲染，两者职责互不越界。</dd>
+            </dl>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 4 章 · 前端工程化 · 原生 HTML / CSS / JavaScript + 一个 Node 脚本</p>
+    </footer>
+</body>
+</html>

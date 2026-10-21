@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 4.5 配置管理 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4.5 配置管理</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>配置管理</h1>
+        <nav class="nav-bar">
+            <a href="../index.html">返回汇总</a>
+            <a href="../01-structure.html">目录结构</a>
+            <a href="../02-assets.html">静态资源</a>
+            <a href="../03-modules/index.html">模块化</a>
+            <a href="../04-build/04-build.html">构建压缩</a>
+            <a href="05-env.html" class="active">配置管理</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、配置到底要管什么</h2>
+            <p>只有一类东西需要配置：<strong>同一份代码，在不同环境下必须取不同的值</strong>。
+                其余的都算常量，写死反而更清楚。</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>配置项</th>
+                        <th>为什么各环境不同</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>API_BASE</code></td>
+                        <td>开发连本地 <code>localhost:3000</code>，线上连正式域名</td>
+                    </tr>
+                    <tr>
+                        <td><code>TIMEOUT</code></td>
+                        <td>本地调试要等断点，线上要快速失败</td>
+                    </tr>
+                    <tr>
+                        <td><code>DEBUG</code></td>
+                        <td>开发要看日志，线上不能把内部信息打到控制台</td>
+                    </tr>
+                    <tr>
+                        <td><code>LOG_LEVEL</code></td>
+                        <td>预发要 <code>info</code> 方便排查，线上只留 <code>error</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>二、一份配置，三种环境</h2>
+            <p>差异集中在一张表里，业务代码只认 <code>getConfig()</code>，
+                再也不会出现「改接口地址要全仓库搜索替换」。</p>
+
+            <pre class="tree"><span class="dim">// config.js</span>
+var ENV_CONFIG = {
+    development: {
+        apiBase: 'http://localhost:3000/api',
+        timeout: 10000,
+        debug: true
+    },
+    production: {
+        apiBase: 'https://api.example.com/api',
+        timeout: 5000,
+        debug: false
+    }
+};
+
+<span class="dim">// 业务代码里唯一的写法</span>
+var config = getConfig(resolveEnv(location.search, location.hostname));
+fetch(config.apiBase + '/notes');</pre>
+
+            <p class="hint">环境判断的优先级：URL 参数 <code>?env=</code> → 域名 → 默认 <code>development</code>。
+                域名判断是线上真实做法：部署到哪个域名，就是哪个环境，不靠人记得改配置。</p>
+        </section>
+
+        <section class="card">
+            <h2>三、现场演示</h2>
+            <p>下面的值全部来自 <code>config.js</code>，切换环境时只换配置，不改任何业务代码。</p>
+
+            <div class="field">
+                <label for="envSelect">切换环境</label>
+                <select id="envSelect">
+                    <option value="development">development · 开发</option>
+                    <option value="staging">staging · 预发</option>
+                    <option value="production">production · 生产</option>
+                </select>
+            </div>
+
+            <div class="stats">
+                <div class="stat"><strong id="envLabel">—</strong><span>当前环境</span></div>
+                <div class="stat"><strong id="envTimeout">—</strong><span>请求超时</span></div>
+                <div class="stat"><strong id="envDebug">—</strong><span>调试日志</span></div>
+            </div>
+
+            <p>当前接口地址：<code id="envApiBase">—</code></p>
+            <p class="hint" id="envSource">—</p>
+
+            <p class="hint">也可以在地址后面加参数试一下：<code>05-env.html?env=production</code> ——
+                刷新后初始环境就变成生产，这正是「临时验证某个环境」的用法。</p>
+        </section>
+
+        <section class="card">
+            <h2>四、三种环境的完整对照</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>配置项</th>
+                        <th>development</th>
+                        <th>staging</th>
+                        <th>production</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>API_BASE</code></td>
+                        <td><code>http://localhost:3000/api</code></td>
+                        <td><code>https://staging.example.com/api</code></td>
+                        <td><code>https://api.example.com/api</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>TIMEOUT</code></td>
+                        <td>10000 ms</td>
+                        <td>8000 ms</td>
+                        <td>5000 ms</td>
+                    </tr>
+                    <tr>
+                        <td><code>DEBUG</code></td>
+                        <td>true</td>
+                        <td>true</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td><code>LOG_LEVEL</code></td>
+                        <td><code>debug</code></td>
+                        <td><code>info</code></td>
+                        <td><code>error</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="hint">这张表就是 <code>config.js</code> 的内容 —— 表变了，代码里的值也要跟着变，别只改一处。</p>
+        </section>
+
+        <section class="card">
+            <h2>五、最容易犯的错：把密钥放进前端配置</h2>
+            <p><strong>前端配置没有秘密。</strong>打包后的 JS 里所有字符串都是明文，
+                <code>F12 → Sources</code> 就能看到；混淆、压缩、环境变量都不能改变这一点。</p>
+
+            <ul class="checklist">
+                <li>
+                    <span class="badge badge-warn">错误</span>
+                    <label>把数据库密码、支付密钥、第三方 <code>secret</code> 写进 <code>config.js</code></label>
+                </li>
+                <li>
+                    <span class="badge badge-warn">错误</span>
+                    <label>以为加 <code>VITE_</code> 前缀就是「安全的环境变量」—— 它只是「会被注入产物」的标记</label>
+                </li>
+                <li>
+                    <span class="badge badge-ok">正确</span>
+                    <label>密钥放服务端，前端只拿短期 token；敏感操作由后端校验</label>
+                </li>
+                <li>
+                    <span class="badge badge-ok">正确</span>
+                    <label>前端配置只放「公开且可被用户看到」的值：接口地址、超时、开关</label>
+                </li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2>六、换成 Vite 项目后怎么写</h2>
+            <p>真实项目不会手搓 <code>resolveEnv</code>，而是让构建工具在打包时把环境变量替换成字面量：</p>
+
+            <pre class="tree"><span class="dim"># .env.development</span>
+VITE_API_BASE=http://localhost:3000/api
+
+<span class="dim"># .env.production</span>
+VITE_API_BASE=https://api.example.com/api
+
+<span class="dim">// 业务代码</span>
+const apiBase = import.meta.env.VITE_API_BASE;</pre>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>机制</th>
+                        <th>说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.env.[mode]</code></td>
+                        <td>按模式加载：<code>vite</code> 用 development，<code>vite build</code> 用 production</td>
+                    </tr>
+                    <tr>
+                        <td><code>VITE_</code> 前缀</td>
+                        <td>只有这个前缀的变量会暴露给前端代码，其余仅构建时可读</td>
+                    </tr>
+                    <tr>
+                        <td><code>import.meta.env.DEV</code></td>
+                        <td>内置布尔值，判断开发/生产比自定义开关更可靠</td>
+                    </tr>
+                    <tr>
+                        <td>值会被替换</td>
+                        <td>打包时直接替换成字符串字面量，运行时没有 <code>env</code> 对象</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p class="hint">所以「改环境变量」其实是「改构建参数 + 重新构建」。
+                想在运行时切换环境，还是得靠本页这种「域名 / URL 参数」的方式。</p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 4 章 · 前端工程化 · 对应笔记 4.5</p>
+    </footer>
+
+    <!-- 先配置，后渲染：顺序不能反 -->
+    <script src="config.js"></script>
+    <script src="env.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+# ===== 对应笔记 7.4 接口调试工具 =====
+# VS Code 装 "REST Client"，JetBrains 自带 HTTP Client，点每个 ### 上方的 Send Request 即可
+# 先启动服务：python3 run.py（等价于 uvicorn app.main:app --reload --port 8000）
+
+@base = http://127.0.0.1:8000
+
+### 健康检查：确认服务活着
+GET {{base}}/api/health
+
+### 列表：分页只看 2 条
+GET {{base}}/api/notes?limit=2&offset=0
+
+### 列表：只看已发布
+GET {{base}}/api/notes?status=published
+
+### 详情：存在
+GET {{base}}/api/notes/1
+
+### 新建
+POST {{base}}/api/notes
+Content-Type: application/json
+
+{
+  "title": "从 .http 文件创建的笔记",
+  "content": "可复用的接口调试脚本，比手点 Postman 快。",
+  "status": "draft"
+}
+
+### 部分更新：只改状态，content 保持不变
+PUT {{base}}/api/notes/1
+Content-Type: application/json
+
+{
+  "status": "published"
+}
+
+### 删除（成功返回 204，没有响应体）
+DELETE {{base}}/api/notes/4
+
+### 故意触发 422：title 为空，看统一错误格式
+POST {{base}}/api/notes
+Content-Type: application/json
+
+{
+  "title": "",
+  "status": "draft"
+}
+
+### 故意触发 404：不存在的 id
+GET {{base}}/api/notes/9999
+
+### 看请求头里的 Origin：调试跨域时最有用的一行
+GET {{base}}/api/debug/request

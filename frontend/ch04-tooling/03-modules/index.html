@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 4.3 代码规范与模块化 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4.3 代码规范与模块化</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>代码规范与模块化</h1>
+        <nav class="nav-bar">
+            <a href="../index.html">返回汇总</a>
+            <a href="../01-structure.html">目录结构</a>
+            <a href="../02-assets.html">静态资源</a>
+            <a href="index.html" class="active">模块化</a>
+            <a href="../04-build/04-build.html">构建压缩</a>
+            <a href="../05-config/05-env.html">配置管理</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、三个文件，各管一件事</h2>
+
+            <div class="modules">
+                <span class="module">main.js</span>
+                <span>→</span>
+                <span class="module">api.js</span>
+                <span>→</span>
+                <span class="module">utils.js</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>文件</th>
+                        <th>职责</th>
+                        <th>导出</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>js/utils.js</code></td>
+                        <td>纯函数：格式化日期、截断文本、排序</td>
+                        <td><code>formatDate</code> <code>truncate</code> <code>sortByDateDesc</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>js/api.js</code></td>
+                        <td>所有网络请求，含统一错误处理</td>
+                        <td><code>fetchNotes</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>js/main.js</code></td>
+                        <td>页面逻辑：拿数据、处理、渲染</td>
+                        <td>无（它是入口，不对外导出）</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>依赖是单向的：<code>main</code> 依赖 <code>api</code> 和 <code>utils</code>，
+                但 <code>utils</code> 谁都不依赖。<strong>反向依赖一出现，就会出现循环引用。</strong></p>
+        </section>
+
+        <section class="card">
+            <h2>二、跑起来是什么样</h2>
+            <p class="hint" id="moduleStatus">加载中…</p>
+            <ul class="note-list" id="moduleList"></ul>
+            <p class="hint">数据来自 <code>data/notes.json</code>，经 <code>api.js</code> 拉取、
+                <code>utils.js</code> 排序与截断后渲染。</p>
+        </section>
+
+        <section class="card">
+            <h2>三、import / export 的四种写法</h2>
+
+            <p><strong>① 命名导出 + 命名导入</strong>（最常用，一个文件可以导出多个）</p>
+            <pre class="tree">// utils.js
+export function formatDate(iso) { /* ... */ }
+
+// main.js
+import { formatDate } from './utils.js';</pre>
+
+            <p><strong>② 默认导出</strong>（一个模块只有一个默认导出）</p>
+            <pre class="tree">// logger.js
+export default function log(msg) { console.log(msg); }
+
+// main.js —— 名字可以自己起
+import log from './logger.js';</pre>
+
+            <p><strong>③ 全部导入成命名空间</strong></p>
+            <pre class="tree">import * as utils from './utils.js';
+utils.formatDate('2026-10-21');</pre>
+
+            <p><strong>④ 重命名</strong>（两个模块导出同名时用）</p>
+            <pre class="tree">import { formatDate as formatShort } from './utils.js';</pre>
+        </section>
+
+        <section class="card">
+            <h2>四、五个必须知道的细节</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="badge">1</span>
+                    <label>必须写 <code>type="module"</code>，否则 <code>import</code> 直接语法报错</label>
+                </li>
+                <li>
+                    <span class="badge">2</span>
+                    <label>路径必须完整带 <code>.js</code> 后缀 —— 浏览器不做后缀补全</label>
+                </li>
+                <li>
+                    <span class="badge">3</span>
+                    <label><code>type="module"</code> 默认 <code>defer</code>：等 HTML 解析完才执行，不用再套 <code>DOMContentLoaded</code></label>
+                </li>
+                <li>
+                    <span class="badge">4</span>
+                    <label>模块有自己的作用域，顶层 <code>const</code> 不会变成 <code>window</code> 属性</label>
+                </li>
+                <li>
+                    <span class="badge badge-warn">5</span>
+                    <label><strong>必须用 HTTP 打开</strong>：<code>file://</code> 下模块会被 CORS 策略拦掉</label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 4 章 · 前端工程化 · 对应笔记 4.3</p>
+    </footer>
+
+    <!-- 入口：只有这一个 script 标签，其余靠 import 串起来 -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

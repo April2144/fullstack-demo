@@ -1,0 +1,81 @@
+# ===== 对应笔记 8.5 进程管理与守护 =====
+#
+# ⚠️ 只读参考：不要在本机执行
+#
+# 放置位置：/etc/systemd/system/fullstack.service
+# 生效步骤：
+#   sudo systemctl daemon-reload      # 改完 unit 文件必须执行，否则 systemd 还用旧配置
+#   sudo systemctl enable --now fullstack
+#   sudo systemctl status fullstack
+#   journalctl -u fullstack -f        # 实时看日志
+#
+# 为什么不用 `nohup uvicorn ... &`：
+#   终端一关、SSH 一断就没了；进程崩了没人拉起；开机不自启。
+#   systemd 三件事全包：守护、自动重启、开机启动。
+
+[Unit]
+Description=Fullstack demo API (FastAPI + uvicorn)
+# 网络就绪后再启动；依赖数据库时再加 mysql.service
+After=network-online.target mysql.service
+Wants=network-online.target
+# 可选：失败时自动重启，但连续重启过多会停（防止死循环把机器拖垮）
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+# simple：ExecStart 启动的进程就是主进程，前台的 uvicorn 正好符合
+Type=simple
+
+# 绝不要用 root 跑业务进程：一旦被打穿，攻击者拿到的就是 root
+User=www-data
+Group=www-data
+
+WorkingDirectory=/srv/fullstack/backend/ch07-api
+
+# 用虚拟环境里的解释器和 uvicorn，避免和系统 Python 混在一起
+# --host 127.0.0.1：只让本机 Nginx 访问，外部直连 8000 会被防火墙挡住
+# --workers 2：多进程跑满两个核；注意此时应用内不要放「进程内状态」（见下方说明）
+ExecStart=/srv/fullstack/.venv/bin/uvicorn app.main:app \
+    --host 127.0.0.1 \
+    --port 8000 \
+    --workers 2 \
+    --proxy-headers \
+    --forwarded-allow-ips=127.0.0.1
+
+# 非 0 退出、被信号杀死都会重启；always 比 on-failure 更适合线上
+Restart=always
+RestartSec=3
+
+# 停止时先发 SIGTERM 让 uvicorn 处理完在途请求，10 秒后再强杀
+KillSignal=SIGTERM
+TimeoutStopSec=10
+
+# 日志进 journald，用 journalctl 查；不要自己写文件再配 logrotate
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=fullstack
+
+# ---------- 安全加固（能加就加，成本几乎为零）----------
+# 禁止提权：即使进程有 setuid 程序也提不上去
+NoNewPrivileges=true
+# 私有 /tmp：看不到别的进程的临时文件
+PrivateTmp=true
+# 只读挂载系统目录，但业务目录要可写（上传、sqlite 文件都在这）
+ProtectSystem=full
+ReadWritePaths=/srv/fullstack
+# 防止进程改内核参数、加载内核模块
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+# 限制可访问的目录，只放开必须的
+RestrictSUIDSGID=true
+
+[Install]
+# 开机自启的挂载点
+WantedBy=multi-user.target
+
+# 关于 --workers 2 的重要提醒：
+#   多进程意味着内存不共享。像「内存里存一个计数器 / 缓存」这类写法，
+#   两个 worker 各有一份，结果会随机跳。要么改成 Redis 这类外部存储，
+#   要么把 workers 设为 1。本项目用 SQLite 文件，多进程并发写会锁表，
+#   真上线请把数据层换成第 6 章的 MySQL，再开多 worker。

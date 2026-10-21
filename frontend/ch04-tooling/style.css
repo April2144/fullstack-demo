@@ -1,0 +1,387 @@
+/* ===== 对应笔记 2.2 CSS 基础 ===== */
+
+/* 1) 设计变量：颜色、间距、圆角集中定义，改一处全站生效 */
+:root {
+    --color-text: #0f172a;
+    --color-muted: #64748b;
+    --color-bg: #f5f7fb;
+    --color-card: #ffffff;
+    --color-border: #e2e8f0;
+    --color-primary: #2563eb;
+    --color-primary-weak: #eef4ff;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+
+    --radius: 10px;
+
+    --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 2) 轻量重置：不同浏览器的默认样式差异先抹平 */
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: var(--space-5);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--color-text);
+    background: var(--color-bg);
+}
+
+h1, h2, h3 { line-height: 1.3; }
+h1 { font-size: 24px; margin: 0; }
+h2 { font-size: 18px; margin: 0 0 var(--space-3); }
+p { margin: var(--space-2) 0; }
+
+code {
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--color-primary-weak);
+    color: var(--color-primary);
+    font-size: 13px;
+}
+
+mark { padding: 0 4px; border-radius: 3px; background: #fef3c7; }
+
+/* 3) 布局：页头用 Flex 一左一右；屏幕窄了自动换行 */
+.site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    max-width: 880px;
+    margin: 0 auto var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.site-header nav {
+    display: flex;
+    gap: var(--space-4);
+}
+
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 4) 卡片：白底 + 细边框 + 圆角，是最常见的容器形态 */
+.card {
+    max-width: 880px;
+    margin: 0 auto var(--space-4);
+    padding: var(--space-5);
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+/* 5) 列表与表格 */
+ul, ol, dl { margin: var(--space-2) 0; padding-left: var(--space-5); }
+dt { font-weight: 600; margin-top: var(--space-2); }
+dd { margin: 0 0 var(--space-2) var(--space-4); color: var(--color-muted); }
+
+table {
+    width: 100%;
+    margin-top: var(--space-3);
+    border-collapse: collapse;
+    font-size: 14px;
+}
+th, td {
+    padding: var(--space-2) var(--space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+th { background: var(--color-bg); font-weight: 600; }
+
+/* 6) 表单：label 与控件竖直排列，控件撑满一行 */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-bottom: var(--space-3);
+}
+
+label { font-size: 13px; color: var(--color-muted); }
+
+input, select, textarea {
+    width: 100%;
+    padding: 8px 10px;
+    font: inherit;
+    color: inherit;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+}
+input:focus, select:focus, textarea:focus {
+    outline: 2px solid var(--color-primary-weak);
+    border-color: var(--color-primary);
+}
+
+.btn {
+    padding: 8px 16px;
+    font: inherit;
+    color: #fff;
+    background: var(--color-primary);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn:hover { filter: brightness(1.06); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* 6.5) 笔记列表：2.4 / 2.5 动态生成的结构，类名与 JS 里保持一致 */
+.hint {
+    margin: var(--space-2) 0;
+    font-size: 13px;
+    color: var(--color-muted);
+}
+
+.note-list {
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.note-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-border);
+}
+.note-item:last-child { border-bottom: none; }
+
+.note-text { flex: 1; word-break: break-word; }
+
+.note-meta {
+    flex: none;
+    font-size: 12px;
+    color: var(--color-muted);
+}
+
+.note-del {
+    flex: none;
+    padding: 2px 10px;
+    font-size: 12px;
+    color: var(--color-muted);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    cursor: pointer;
+}
+.note-del:hover { color: #dc2626; border-color: #dc2626; }
+
+.demo-figure { width: 100%; max-width: 320px; height: auto; margin: var(--space-3) 0; }
+.site-footer {
+    max-width: 880px;
+    margin: var(--space-6) auto 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+/* 7) 响应式：窄屏时收窄留白，页头改为纵向 */
+@media (max-width: 600px) {
+    body { padding: var(--space-3); }
+    .card { padding: var(--space-4); }
+    .site-header { flex-direction: column; align-items: flex-start; }
+}
+
+/* 8) 深色模式：只换变量，不改任何选择器 —— 这就是变量化的好处 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-text: #e2e8f0;
+        --color-muted: #94a3b8;
+        --color-bg: #0f172a;
+        --color-card: #16233a;
+        --color-border: #24344d;
+        --color-primary: #60a5fa;
+        --color-primary-weak: #1e3a5f;
+    }
+    mark { background: #78350f; color: #fde68a; }
+}
+
+/* ===== 第 1 章扩展：流程示意 / 目录树 / 检查清单 ===== */
+/* 注：以上为第 2 章基线样式，以下为第 1 章新增 */
+
+/* 一、请求流程：横向步骤链，窄屏自动换行 */
+.flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: var(--space-3) 0;
+}
+
+.flow-step {
+    padding: var(--space-2) var(--space-3);
+    font-size: 13px;
+    text-align: center;
+    background: var(--color-primary-weak);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+}
+.flow-step strong { display: block; font-size: 14px; color: var(--color-primary); }
+.flow-step span { color: var(--color-muted); }
+
+.flow-arrow { color: var(--color-muted); }
+
+/* 二、纵向流程：适合步骤之间有分支说明时用 */
+.flow-col { display: flex; flex-direction: column; gap: var(--space-2); }
+.flow-col .flow-step { text-align: left; }
+
+/* 三、目录树：等宽字体 + 保留换行，横向可滚动防止长路径撑破容器 */
+.tree {
+    margin: var(--space-3) 0;
+    padding: var(--space-4);
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    white-space: pre;
+}
+.tree .dim { color: var(--color-muted); }
+
+/* 四、检查清单：用原生 checkbox，不依赖 JS */
+.checklist {
+    margin: var(--space-2) 0;
+    padding: 0;
+    list-style: none;
+}
+.checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+    border-bottom: 1px dashed var(--color-border);
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist input { width: auto; margin-top: 4px; }
+.checklist label { font-size: 14px; color: var(--color-text); cursor: pointer; }
+.checklist code { font-size: 12px; }
+
+/* 五、编号标签：给「能力模型」「误区」这类条目加序号 */
+.num-tag {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    color: #fff;
+    background: var(--color-primary);
+    border-radius: 50%;
+}
+
+/* 六、两层对比：左右并排，窄屏上下堆叠 */
+.split-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+}
+@media (max-width: 600px) {
+    .split-2 { grid-template-columns: minmax(0, 1fr); }
+}
+
+.panel {
+    padding: var(--space-4);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+.panel h3 { margin: 0 0 var(--space-2); font-size: 16px; }
+.panel ul { margin: 0; padding-left: var(--space-5); }
+.panel li { font-size: 14px; color: var(--color-muted); }
+
+/* ===== 第 4 章扩展：导航 / 体积对比 / 模块关系 ===== */
+
+/* 一、水平导航 */
+.nav-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+}
+.nav-bar a {
+    padding: 4px 0;
+    color: var(--color-muted);
+    border-bottom: 2px solid transparent;
+}
+.nav-bar a:hover { color: var(--color-primary); text-decoration: none; }
+.nav-bar a.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+/* 二、体积对比：构建前后的数字对照 */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-3);
+    margin: var(--space-3) 0;
+}
+.stat {
+    padding: var(--space-3) var(--space-4);
+    text-align: center;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+.stat strong {
+    display: block;
+    font-size: 22px;
+    color: var(--color-primary);
+}
+.stat span { font-size: 12px; color: var(--color-muted); }
+
+/* 三、模块关系图：用 flex 排列模块名与箭头 */
+.modules {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: var(--space-3) 0;
+}
+.module {
+    padding: var(--space-2) var(--space-3);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    background: var(--color-primary-weak);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+}
+
+/* 四、状态标签 */
+.badge {
+    display: inline-block;
+    padding: 1px 8px;
+    font-size: 12px;
+    border-radius: 999px;
+    background: var(--color-primary-weak);
+    color: var(--color-primary);
+}
+.badge-warn { background: #fef3c7; color: #92400e; }
+.badge-ok { background: #d1fae5; color: #065f46; }
+
+/* 五、构建产物目录对照：左右两栏 */
+.file-cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-3);
+}
+@media (max-width: 600px) {
+    .file-cols { grid-template-columns: minmax(0, 1fr); }
+}

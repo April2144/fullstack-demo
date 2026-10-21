@@ -87,3 +87,95 @@
 
 - 本目录已初始化为 git 仓库（`main`），远端为 `git@github.com:April2144/fullstack-demo-.git`；
   README 第四节的 tag 方案自此具备执行条件（tag 待各章定稿后单独打）
+
+## v0.4 · 2026-10-22
+
+补齐第 4 章与第 6–9 章。小节标题一律取自本地 `site_db`（`learning_chapters` / `learning_articles`，`series_id = 5`），
+不按印象补；第 6–9 章文章均为草稿（`status = 0`），标题核对后再落地。
+
+### 新增：第 4 章（`frontend/ch04-tooling/`）
+
+- `4.4 构建与压缩` → `04-build/build.mjs`（零依赖构建：合并 + 去注释 + 压空白）、
+  `04-build/src/*`（源文件）、`04-build/04-build.html`；实测 2.44 KB → 1.27 KB（-47.8%）
+- `4.5 配置管理` → `05-config/config.js`（三环境配置 + 环境判定）、`05-config/env.js`（只负责渲染）、
+  `05-config/05-env.html`（现场切换，支持 `?env=production`）
+- 汇总页 `index.html`、说明 `README.md`（补齐后本章导航无死链）
+
+### 新增：第 6 章（`backend/ch06-database/`）
+
+- `6.1 关系型数据库基础` → `README.md` 第一节（表/行/主键/外键/索引、三种关系）
+- `6.2 表设计与字段类型` → `schema.mysql.sql`（正文口径）+ `schema.sqlite.sql`（等价方言）、字段类型对照表
+- `6.3 SQL 增删改查` → `queries.sql` + `seed.sql`
+- `6.4 Python 操作 MySQL` → `crud_demo.py`（一轮 CRUD + 事务回滚 + LEFT JOIN + 先查后删）
+- `6.5 数据库连接与配置管理` → `db.py`（配置分层 / 连接工厂 / 事务上下文 / 两后端差异收口）、
+  `db_config.example.json`
+
+### 新增：第 7 章（`backend/ch07-api/`）
+
+- `7.1 FastAPI 接口设计基础` → `main.py`（复数路径 + HTTP 方法、201/204、`lifespan` 启动钩子）
+- `7.2 请求与响应数据格式` → `schemas.py`（创建/更新/出参三套模型、`ApiResponse` 统一响应包、422 字段级错误）
+- `7.3 跨域与代理配置` → `CORSMiddleware` 白名单 + `/api/debug/request` 回显 `Origin`
+- `7.4 接口调试工具` → `api.http`（REST Client 脚本）+ `/docs`
+- `7.5 前后端联调实战` → `web/index.html` + `web/app.js`（列表/筛选/新增/删除，204 与错误态处理）
+- `store.py`（SQLite 数据层）、`requirements.txt`、`README.md`
+
+### 新增：第 8–9 章（`deploy/ch08-09/`，只读参考）
+
+- 8.2 `cheatsheet.md`；8.3 `scripts/install-python-mysql.sh`；8.4 `nginx/fullstack.conf`；
+  8.5 `systemd/fullstack.service`；8.6 `scripts/deploy.sh`
+- 9.2 `nginx/https.conf`；9.5 `scripts/healthcheck.sh`
+- 8.1 选购清单、9.1 解析、9.3/9.4 备案材料与流程，统一写在 `README.md`
+- 脚本均已 `bash -n` 校验并置 `+x`；全部标注「不要在本机执行」
+
+### 验证
+
+- 第 6 章：`python3 crud_demo.py` 退出码 0，事务冲突后 `users` 行数 2 → 2（无脏数据），
+  LEFT JOIN 正确带出无标签笔记
+- 第 7 章：`GET /api/health`、`/api/notes`、`POST`（201）、`PUT`、`DELETE`（204）逐一实测；
+  404 返回 `{"code":404,...}`，422 返回字段级 `errors`；无头浏览器打开 `/web/` 渲染出 3 条数据
+- 第 4 章：`node build.mjs` 通过、`node --check dist/bundle.min.js` 通过、6 个页面链接 0 缺失
+
+### 说明（取舍）
+
+- 第 6 章正文口径是 MySQL，但仓库原则是「零配置可跑」，故**默认 SQLite + 同结构 MySQL 版并存**，
+  `--backend mysql` 走真实 pymysql；两边共用同一份业务 SQL，方言差异集中在 `db.py`
+- 第 8–9 章保持「只读参考」，不做本地可执行的 Nginx 演示（避免要求本机装 nginx）
+- 根 `README.md` 同步：章节映射表状态、后端/部署运行方式、编写原则第 1 条改为「默认 SQLite + MySQL 版并存」
+
+## v0.5 · 2026-10-22
+
+补齐第 5 章；第 7 章按第 5 章的骨架重构，两章目录结构自此一致；仓库忽略规则补充。
+第 5 章文章标题同样取自本地 `site_db`（第 5 章 6 篇均为草稿）。
+
+### 新增：第 5 章（`backend/ch05-fastapi/`）
+
+- `5.1 Python 基础` → `basics/01_python_basics.py`（标注/容器/推导式/默认参数陷阱/dataclass/异常/`__main__`）、
+  `basics/02_stdlib_tour.py`（`json` / `datetime` / `pathlib` / `re` / `Counter`、`None` 与假值）
+- `5.2 FastAPI 入门与环境搭建` → `app/config.py`（frozen dataclass）、`app/main.py`（装配）、`run.py`
+- `5.3 路由设计与请求处理` → `app/routers/hello.py`（查询/路径/请求体、201/204、静态路由顺序陷阱）
+- `5.4 请求参数与响应模型` → `app/schemas.py`、`app/routers/items.py`、`app/store.py`（内存仓库）
+- `5.5 错误处理与日志` → `app/errors.py`（业务错误/422/404/500 四类）、`app/logging_config.py`
+- `5.6 依赖注入与中间件` → `app/deps.py`（分页/仓库/token 依赖）、`app/middleware.py`（`X-Request-ID` + 耗时）
+- `requirements.txt`、`README.md`
+
+### 重构：第 7 章（结构对齐第 5 章）
+
+- 根目录 `main.py` / `schemas.py` / `store.py` **平移**到 `app/` 下，内容无丢失
+- 新增 `app/config.py`（CORS 白名单、`db_path`）、`app/errors.py`、`app/logging_config.py`、
+  `app/middleware.py`、`app/deps.py`、`app/routers/notes.py`、`run.py`
+- `store.py` 由函数式改为 `NoteStore` 类封装，供 `deps.get_store()` 注入；`NoteList` 更名为 `NotePage`（与 `ItemPage` 对齐）
+- 启动方式统一为 `python3 run.py`（等价 `uvicorn app.main:app`）；`api.http` 与部署文档同步
+- ⚠️ v0.4 条目中第 7 章的根目录路径（`main.py` / `schemas.py` / `store.py`）已失效，以本节为准
+
+### 变更：仓库约定
+
+- `.gitignore` 新增：`frontend/ch04-tooling/04-build/dist/`（构建产物）、`db_config.json`（含密码）、`*.pem` / `*.key`
+
+### 验证
+
+- 第 5 章：`basics/*.py` 直接运行无报错；`/api/hello`、`/api/hello/echo`（静态优先）、`/api/hello/{name}`、
+  `POST`（201）、`422`、无 token（401）/带 token（200）、`/api/items` 五个接口逐一实测；
+  响应头含 `X-Request-ID`、`X-Process-Time-ms`，日志按 `rid` 可对应
+- 第 7 章重构后：`health` / `list` / `create`(201) / `update` / 空更新(400) / `delete`(204) / `404` / `422` 全通；
+  CORS 预检返回 `access-control-allow-origin: http://localhost:8080`；无头浏览器打开 `/web/` 仍渲染出 3 条
+- 第 8 章 systemd 的 `ExecStart` 已改为 `app.main:app`，与实际目录一致

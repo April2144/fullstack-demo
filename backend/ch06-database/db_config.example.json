@@ -1,0 +1,12 @@
+{
+  "_说明": "复制成 db_config.json 再改成自己的值；不创建这个文件时默认走 SQLite，零配置可跑",
+  "backend": "mysql",
+  "mysql": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "user": "root",
+    "password": "改成你的密码",
+    "database": "fullstack_demo",
+    "charset": "utf8mb4"
+  }
+}

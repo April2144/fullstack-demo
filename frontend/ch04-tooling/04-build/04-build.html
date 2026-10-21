@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<!-- ===== 对应笔记 4.4 构建与压缩 ===== -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4.4 构建与压缩</title>
+    <link rel="stylesheet" href="../style.css">
+    <!-- 下面这个文件不是手写的：node build.mjs 生成，改 src/style.css 后重新构建才会更新 -->
+    <link rel="stylesheet" href="dist/bundle.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>构建与压缩</h1>
+        <nav class="nav-bar">
+            <a href="../index.html">返回汇总</a>
+            <a href="../01-structure.html">目录结构</a>
+            <a href="../02-assets.html">静态资源</a>
+            <a href="../03-modules/index.html">模块化</a>
+            <a href="04-build.html" class="active">构建压缩</a>
+            <a href="../05-config/05-env.html">配置管理</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>一、构建工具到底做了什么</h2>
+            <p>「构建」听起来玄，拆开看只有四个动作。本页的脚本只做前两个 —— 足够让你看清原理，
+                剩下的交给真实工具。</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>动作</th>
+                        <th>具体在干什么</th>
+                        <th>本页脚本</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>合并</strong></td>
+                        <td>多个文件按依赖顺序拼成一个，减少请求数</td>
+                        <td>✅ <code>utils.js</code> + <code>app.js</code> → 一个</td>
+                    </tr>
+                    <tr>
+                        <td><strong>压缩</strong></td>
+                        <td>删注释、删缩进、合并空白，不改逻辑</td>
+                        <td>✅ 手写 <code>minify()</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>转译</strong></td>
+                        <td>把新语法 / TS / SCSS 变成浏览器能懂的老语法</td>
+                        <td>❌ 交给 Babel / esbuild</td>
+                    </tr>
+                    <tr>
+                        <td><strong>产物命名</strong></td>
+                        <td>文件名带内容哈希，配合强缓存做「永不失效 + 秒更新」</td>
+                        <td>❌ 交给 Vite</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p class="hint">压缩不改变程序行为，只改变「传输体积」和「解析时间」—— 这也是它能被自动化到无脑执行的原因。</p>
+        </section>
+
+        <section class="card">
+            <h2>二、目录对照：手写 vs 生成</h2>
+
+            <div class="file-cols">
+                <pre class="tree">04-build/
+├── build.mjs          <span class="dim"># 构建脚本</span>
+├── src/               <span class="dim"># 你写的</span>
+│   ├── utils.js
+│   ├── app.js
+│   └── style.css
+└── dist/              <span class="dim"># 生成的</span>
+    ├── bundle.min.js
+    └── bundle.min.css</pre>
+
+                <pre class="tree"><span class="dim">// src/utils.js 开头</span>
+/**
+ * 字节数转人类可读的大小。
+ * @param {number} bytes
+ */
+function formatSize(bytes) { ... }
+
+<span class="dim">// dist/bundle.min.js 里同样的部分</span>
+function formatSize(bytes){
+if(bytes&lt;1024){
+return bytes+' B';
+}
+...
+</pre>
+            </div>
+
+            <p class="hint"><strong>只改 <code>src/</code>，永远不要手改 <code>dist/</code></strong> ——
+                下次构建会整个覆盖，改了什么都不会留下。</p>
+        </section>
+
+        <section class="card">
+            <h2>三、跑一次，看真实数字</h2>
+
+            <pre class="tree">$ cd frontend/ch04-tooling/04-build
+$ node build.mjs
+  合并 utils.js       0.70 KB → 0.30 KB
+  合并 app.js         0.96 KB → 0.52 KB
+
+构建完成
+  源文件合计   2.44 KB
+  产物合计     1.27 KB
+  减少         47.8%</pre>
+
+            <div class="stats">
+                <div class="stat"><strong>2.44 KB</strong><span>源文件合计</span></div>
+                <div class="stat"><strong>1.27 KB</strong><span>产物合计</span></div>
+                <div class="stat"><strong>47.8%</strong><span>体积减少</span></div>
+            </div>
+
+            <p>省下的部分几乎全是<strong>注释和缩进</strong>。体积按 UTF-8 字节算，一个中文注释字符占 3 字节 ——
+                所以中文注释多的项目，压缩收益会比纯英文项目更夸张，这也是「注释写清楚不心疼」的底气。</p>
+        </section>
+
+        <section class="card">
+            <h2>四、产物真的能跑</h2>
+            <p>下面这块内容不是写在 HTML 里的，而是 <code>dist/bundle.min.js</code> 执行后插进去的：</p>
+
+            <!-- 这块内容由 dist/bundle.min.js 渲染，样式来自 dist/bundle.min.css -->
+            <div id="buildDemo" class="build-demo">脚本没加载？检查 dist/ 是否已构建。</div>
+
+            <p class="hint">这一块同时验证了两件事：合并后的脚本没有因为压缩而报错；
+                <code>formatSize()</code> 定义在 <code>utils.js</code>、调用在 <code>app.js</code>，顺序没被弄反。
+                里面的数字是 <code>app.js</code> 写死的示例值，真实体积以上面的终端输出为准。</p>
+        </section>
+
+        <section class="card">
+            <h2>五、这套压缩碰不得的四个地方</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="badge badge-warn">ASI</span>
+                    <label>删换行会触发<strong>自动分号插入</strong>：
+                        <code>return</code> 后换行会变成 <code>return;</code>。本脚本只压行内空白、保留换行，就是躲这个坑</label>
+                </li>
+                <li>
+                    <span class="badge badge-warn">字符串</span>
+                    <label><code>'https://api.example.com'</code> 里的 <code>//</code> 不是注释，粗暴正则会把 URL 砍掉一半</label>
+                </li>
+                <li>
+                    <span class="badge badge-warn">正则</span>
+                    <label><code>/\/\*[\s\S]*?\*\//</code> 这种字面量里也有注释符号，按行删注释会把它拆碎</label>
+                </li>
+                <li>
+                    <span class="badge badge-warn">模板字符串</span>
+                    <label>反引号里的换行和缩进是<strong>内容</strong>，压掉就改变了输出文本</label>
+                </li>
+            </ul>
+            <p class="hint">所以真实工具不是用正则做压缩，而是先把代码解析成语法树（AST），再重新生成代码 ——
+                能区分「这是注释」和「这是字符串里的两个斜杠」。</p>
+        </section>
+
+        <section class="card">
+            <h2>六、既然能跑，为什么还要 Vite</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>能力</th>
+                        <th>本章脚本</th>
+                        <th>Vite</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>模块依赖分析</td>
+                        <td>手写数组排顺序</td>
+                        <td>读 <code>import</code> 自动排序</td>
+                    </tr>
+                    <tr>
+                        <td>Tree Shaking</td>
+                        <td>无：没用到的代码照样打包</td>
+                        <td>删掉没被引用的导出</td>
+                    </tr>
+                    <tr>
+                        <td>改代码后</td>
+                        <td>手动重跑 <code>node build.mjs</code></td>
+                        <td>热更新，浏览器里直接生效</td>
+                    </tr>
+                    <tr>
+                        <td>排错</td>
+                        <td>压缩后行号全乱</td>
+                        <td>sourcemap 映射回源码</td>
+                    </tr>
+                    <tr>
+                        <td>缓存</td>
+                        <td>文件名固定 → 改一次全量失效</td>
+                        <td>内容哈希文件名 → 只失效改动的那一个</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>结论：</strong>几十行脚本能让你理解构建，但项目一旦上规模，
+                模块解析、Tree Shaking、sourcemap 这三件事就无法用脚本糊过去了 —— 该上 Vite 就上，
+                不必因为「手写显得硬核」而硬撑。</p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>第 4 章 · 前端工程化 · 对应笔记 4.4</p>
+    </footer>
+
+    <!-- 构建产物：一个 script 标签，合并后的全部逻辑 -->
+    <script src="dist/bundle.min.js"></script>
+</body>
+</html>

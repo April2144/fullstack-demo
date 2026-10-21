@@ -1,0 +1,4 @@
+# 第 7 章依赖：只有框架本身，数据库用标准库 sqlite3
+# 安装：pip install -r requirements.txt
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30

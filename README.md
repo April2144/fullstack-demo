@@ -31,7 +31,40 @@ cd frontend/ch03-interaction && python3 -m http.server 8081
 
 ### 后端（第 5–7 章）
 
-待填充。约定：**Python + FastAPI + MySQL**，不依赖重型框架，`pip install -r requirements.txt` 即可运行。
+```bash
+# 第 5 章 语言与框架：先看语法脚本，再起服务
+cd backend/ch05-fastapi
+python3 basics/01_python_basics.py
+python3 run.py            # http://127.0.0.1:8000/docs
+
+# 第 6 章 数据库：默认 SQLite，克隆下来直接跑
+cd backend/ch06-database && python3 crud_demo.py
+# 想跑真实 MySQL：cp db_config.example.json db_config.json 改成自己的账号密码，
+# 再 python3 crud_demo.py --backend mysql
+
+# 第 7 章 API：FastAPI + Uvicorn
+cd backend/ch07-api && pip install -r requirements.txt
+python3 run.py
+# 接口文档 http://127.0.0.1:8000/docs
+# 联调页面 http://127.0.0.1:8000/web/
+```
+
+约定：**Python + FastAPI + MySQL**。为了让读者零配置跑通，第 6 章默认用 SQLite，
+同时提供 MySQL 表结构与 `--backend mysql` 的真实 pymysql 路径；第 7 章数据层用 SQLite 文件。
+
+### 部署配置（第 8–9 章，只读参考）
+
+```bash
+deploy/ch08-09/
+├── nginx/fullstack.conf       # 8.4 反向代理
+├── nginx/https.conf           # 9.2 HTTPS
+├── systemd/fullstack.service  # 8.5 进程守护
+├── scripts/*.sh               # 8.3 初始化 / 8.6 部署 / 9.5 监控
+├── cheatsheet.md              # 8.2 命令速查
+└── README.md                  # 8.1 选购、9.1 解析、9.3/9.4 备案
+```
+
+> 这一章是给你复制到服务器用的，**不要在本机执行**。
 
 > 技术栈口径以专题 1.3 正文为准：前端 HTML/CSS/JS、后端 Python + FastAPI、数据库 **MySQL**
 > （SQLite 在正文中只作为「小型项目、本地存储」的对比项，不是本专题选型）。
@@ -46,13 +79,13 @@ fullstack-demo/
 │   ├── ch01-overview/        ✅ 已实现（全栈概述 / 请求流程 / 技术栈 / 环境 / 目录结构）
 │   ├── ch02-basics/          ✅ 已实现（HTML / CSS / JS / DOM / fetch）
 │   ├── ch03-interaction/     ✅ 已实现（布局 / 主题 / 表单 / 渲染 / 响应式）
-│   └── ch04-tooling/         ⏳ 待填充
+│   └── ch04-tooling/         ✅ 已实现（目录结构 / 资源 / 模块化 / 构建压缩 / 配置管理）
 ├── backend/
-│   ├── ch05-fastapi/         ⏳ 待填充
-│   ├── ch06-database/        ⏳ 待填充
-│   └── ch07-api/             ⏳ 待填充
+│   ├── ch05-fastapi/         ✅ 已实现（Python 基础 / FastAPI 骨架 / 路由 / 模型 / 错误日志 / 依赖注入）
+│   ├── ch06-database/        ✅ 已实现（表设计 / SQL / Python 操作库 / 连接配置）
+│   └── ch07-api/             ✅ 已实现（FastAPI 接口 / 统一响应 / 跨域 / 联调页）
 ├── deploy/
-│   └── ch08-09/              ⏳ 待填充（只读参考，不直接执行）
+│   └── ch08-09/              ✅ 已实现（只读参考：nginx / systemd / 脚本 / 备案清单）
 ├── practice/                 ⏳ 第 14 章实战：前端 + SQLite + FastAPI 完整小站
 ├── README.md                 ← 本文件：索引与约定
 └── CHANGELOG.md              ← 每次改动对应哪几篇笔记
@@ -68,12 +101,12 @@ fullstack-demo/
 | 第 1 章 | 全栈开发概述与环境准备 | `frontend/ch01-overview/` | 1.1 – 1.5 | ✅ 完成 |
 | 第 2 章 | 前端基础 | `frontend/ch02-basics/` | 2.1 – 2.5 | ✅ 完成 |
 | 第 3 章 | 页面开发与交互 | `frontend/ch03-interaction/` | 3.1 – 3.5 | ✅ 完成 |
-| 第 4 章 | 前端工程化 | `frontend/ch04-tooling/` | 4.1 – 4.5 | ⏳ |
-| 第 5 章 | 后端语言与框架 | `backend/ch05-fastapi/` | 5.1 – 5.6 | ⏳ |
-| 第 6 章 | 数据库设计与操作 | `backend/ch06-database/` | 6.1 – 6.5 | ⏳ |
-| 第 7 章 | API 设计与前后端联调 | `backend/ch07-api/` | 7.1 – 7.5 | ⏳ |
-| 第 8 章 | 服务器与部署 | `deploy/ch08-09/` | 8.1 – 8.6 | ⏳ |
-| 第 9 章 | 域名、HTTPS 与备案 | `deploy/ch08-09/` | 9.1 – 9.5 | ⏳ |
+| 第 4 章 | 前端工程化 | `frontend/ch04-tooling/` | 4.1 – 4.5 | ✅ 完成 |
+| 第 5 章 | 后端语言与框架 | `backend/ch05-fastapi/` | 5.1 – 5.6 | ✅ 完成 |
+| 第 6 章 | 数据库设计与操作 | `backend/ch06-database/` | 6.1 – 6.5 | ✅ 完成 |
+| 第 7 章 | API 设计与前后端联调 | `backend/ch07-api/` | 7.1 – 7.5 | ✅ 完成 |
+| 第 8 章 | 服务器与部署 | `deploy/ch08-09/` | 8.1 – 8.6 | ✅ 完成（只读参考） |
+| 第 9 章 | 域名、HTTPS 与备案 | `deploy/ch08-09/` | 9.1 – 9.5 | ✅ 完成（含备案清单） |
 | 第 10 章 | 架构设计与性能优化 | 待定 | 10.1 – 10.5 | ⏳ |
 | 第 11 章 | 安全与权限控制 | 待定 | 11.1 – 11.5 | ⏳ |
 | 第 12 章 | 缓存与高并发 | 待定 | 12.1 – 12.5 | ⏳ |
@@ -120,7 +153,8 @@ fullstack-demo/
 
 ## 五、编写原则
 
-1. **零外部依赖**：前端只用浏览器原生能力；后端只用 Python + FastAPI + SQLite
+1. **零外部依赖**：前端只用浏览器原生能力；后端只用 Python + FastAPI，数据库演示默认 SQLite（零配置），
+   MySQL 版表结构与 `--backend mysql` 代码同时提供；第 8–9 章的服务器配置只读参考，不在本机执行
 2. **零配置**：不写死绝对路径、不读环境变量、不连外部数据库
 3. **可运行**：每个目录都能单独跑起来，不依赖其它章节
 4. **一文件一事**：文件按笔记编号拆分，不把整章塞进一个巨型文件

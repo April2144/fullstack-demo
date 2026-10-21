@@ -1,0 +1,4 @@
+# 第 5 章依赖：只有框架本身，第 5 章还不涉及数据库
+# 安装：pip install -r requirements.txt
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30

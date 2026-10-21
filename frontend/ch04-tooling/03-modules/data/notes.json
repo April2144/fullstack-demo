@@ -1,0 +1,10 @@
+{
+  "items": [
+    { "id": 1, "title": "把请求收进 api.js，页面不再到处写 fetch", "date": "2026-10-15" },
+    { "id": 2, "title": "纯函数放 utils.js，给输入就出输出", "date": "2026-10-16" },
+    { "id": 3, "title": "ES Module 用 import / export，不再靠全局变量", "date": "2026-10-17" },
+    { "id": 4, "title": "模块之间只能单向依赖，避免循环引用", "date": "2026-10-18" },
+    { "id": 5, "title": "type=\"module\" 会延迟执行，等价于 defer", "date": "2026-10-19" },
+    { "id": 6, "title": "模块作用域独立，顶层变量不再污染 window", "date": "2026-10-20" }
+  ]
+}

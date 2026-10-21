@@ -15,3 +15,13 @@ venv/
 
 # 运行产物
 *.log
+
+# 构建产物：跑 node build.mjs 才会生成，不该进版本库
+frontend/ch04-tooling/04-build/dist/
+
+# 本地数据库配置：含真实密码，只提交 db_config.example.json
+db_config.json
+
+# 密钥与证书：万一有人把证书或私钥放进仓库
+*.pem
+*.key
