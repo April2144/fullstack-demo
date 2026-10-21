@@ -65,7 +65,8 @@
   脚本顶层不允许 `return`，改为「可选链 + 函数内守卫」：
   `addNoteItem` / `updateCount` 增加 `if (!list) return` / `if (!countHint || !list) return`，
   `form` / `list` 的事件绑定改为 `?.addEventListener`。
-- `README.md`：tag 链接 `fullstack-demo-` → `fullstack-demo`（去掉尾部短横线）。
+- `README.md`：tag 链接曾被误改为 `fullstack-demo`，**已还原为 `fullstack-demo-`**。
+  仓库真名确实带尾部短横线（`https://github.com/April2144/fullstack-demo-.git`），不是笔误，v0.2 的「待确认」条目作废。
 
 ### 验证
 
@@ -73,7 +74,16 @@
 - `ch02-basics/index.html` 回归：笔记 2 条、搜索结果 5 条、远程列表 5 条，功能正常
 - 三章共 14 个页面：HTTP 200、控制台报错 0
 
+### 环境同步（线上 → 本地，只动开发库，未碰生产）
+
+- 本地 `site_db` 专题 5 的导读与第 1 章（id `175`、`177`–`181`）按线上内容更新：
+  标题、正文、`status`（`0 → 1`）、`updated_at` 与线上**逐字一致**
+- 清空上述 5 篇的 `draft_data` 旧草稿缓存（线上这 6 篇 `has_draft` 均为 `False`），
+  否则 admin 打开时仍会显示旧草稿
+- 同步前备份：`/tmp/learning_articles_backup_20261021_234456.json`（6 行完整数据，可回滚）
+- 复核：本地 `GET /site/learning/series/5` → `article_count = 6`（同步前为 1）
+
 ### 说明
 
-- `fullstack-demo` 目录当前**不是 git 仓库**（无 `.git`、无远端），
-  因此 README 第四节的「每章一个 tag、链接固定到 tag」方案尚未具备执行条件
+- 本目录已初始化为 git 仓库（`main`），远端为 `git@github.com:April2144/fullstack-demo-.git`；
+  README 第四节的 tag 方案自此具备执行条件（tag 待各章定稿后单独打）

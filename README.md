@@ -105,7 +105,7 @@ fullstack-demo/
 1. **每章一个 git tag**：`ch02`、`ch03`…；章内结构调整用 `ch02.1` 这类小版本
 2. **文章里的链接固定到 tag**，不用 `main`：
    ```
-   https://github.com/April2144/fullstack-demo/tree/ch02/frontend/ch02-basics
+   https://github.com/April2144/fullstack-demo-/tree/ch02/frontend/ch02-basics
    ```
 3. **文件头标注归属**：
    ```js
