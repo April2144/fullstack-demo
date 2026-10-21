@@ -112,12 +112,15 @@
 
 ### 新增：第 7 章（`backend/ch07-api/`）
 
-- `7.1 FastAPI 接口设计基础` → `main.py`（复数路径 + HTTP 方法、201/204、`lifespan` 启动钩子）
-- `7.2 请求与响应数据格式` → `schemas.py`（创建/更新/出参三套模型、`ApiResponse` 统一响应包、422 字段级错误）
-- `7.3 跨域与代理配置` → `CORSMiddleware` 白名单 + `/api/debug/request` 回显 `Origin`
+- `7.1 FastAPI 接口设计基础` → `app/routers/notes.py`（复数路径 + HTTP 方法、201/204）、
+  `app/main.py`（`lifespan` 启动钩子）
+- `7.2 请求与响应数据格式` → `app/schemas.py`（创建/更新/出参三套模型、`ApiResponse` 统一响应包）、
+  `app/errors.py`（422 字段级错误）
+- `7.3 跨域与代理配置` → `app/main.py` 的 `CORSMiddleware`（白名单在 `app/config.py`）
+  + `/api/debug/request` 回显 `Origin`
 - `7.4 接口调试工具` → `api.http`（REST Client 脚本）+ `/docs`
 - `7.5 前后端联调实战` → `web/index.html` + `web/app.js`（列表/筛选/新增/删除，204 与错误态处理）
-- `store.py`（SQLite 数据层）、`requirements.txt`、`README.md`
+- `app/store.py`（SQLite 数据层，类封装）、`requirements.txt`、`README.md`
 
 ### 新增：第 8–9 章（`deploy/ch08-09/`，只读参考）
 
@@ -163,9 +166,9 @@
 - 根目录 `main.py` / `schemas.py` / `store.py` **平移**到 `app/` 下，内容无丢失
 - 新增 `app/config.py`（CORS 白名单、`db_path`）、`app/errors.py`、`app/logging_config.py`、
   `app/middleware.py`、`app/deps.py`、`app/routers/notes.py`、`run.py`
-- `store.py` 由函数式改为 `NoteStore` 类封装，供 `deps.get_store()` 注入；`NoteList` 更名为 `NotePage`（与 `ItemPage` 对齐）
+- `app/store.py` 由函数式改为 `NoteStore` 类封装，供 `deps.get_store()` 注入；`NoteList` 更名为 `NotePage`（与 `ItemPage` 对齐）
 - 启动方式统一为 `python3 run.py`（等价 `uvicorn app.main:app`）；`api.http` 与部署文档同步
-- ⚠️ v0.4 条目中第 7 章的根目录路径（`main.py` / `schemas.py` / `store.py`）已失效，以本节为准
+- v0.4 条目中第 7 章的路径已同步为重构后的实际位置（`app/` 下），无需再对照本节修正
 
 ### 变更：仓库约定
 
