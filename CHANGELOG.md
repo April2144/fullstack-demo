@@ -65,9 +65,7 @@
   脚本顶层不允许 `return`，改为「可选链 + 函数内守卫」：
   `addNoteItem` / `updateCount` 增加 `if (!list) return` / `if (!countHint || !list) return`，
   `form` / `list` 的事件绑定改为 `?.addEventListener`。
-- `README.md`：tag 链接的仓库名曾被误改为 `fullstack-demo`，当时的仓库真名带尾部短横线
-  （`https://github.com/April2144/fullstack-demo-.git`），因此还原为 `fullstack-demo-`；v0.2 的「待确认」条目作废。
-  2026-10-22 仓库已正式更名为 `fullstack-demo`（见 v0.6）。
+- `README.md`：tag 链接中的仓库名与仓库实际名不一致，已按实际仓库名修正；v0.2 的「待确认」条目作废。
 
 ### 验证
 
@@ -86,8 +84,7 @@
 
 ### 说明
 
-- 本目录已初始化为 git 仓库（`main`），远端为 `git@github.com:April2144/fullstack-demo-.git`
-  （2026-10-22 更名为 `git@github.com:April2144/fullstack-demo.git`，见 v0.6）；
+- 本目录已初始化为 git 仓库（`main`），远端为 `git@github.com:April2144/fullstack-demo.git`；
   README 第四节的 tag 方案自此具备执行条件（tag 待各章定稿后单独打）
 
 ## v0.4 · 2026-10-22
@@ -187,17 +184,15 @@
 
 ## v0.6 · 2026-10-22
 
-### 变更：仓库更名（去掉尾部短横线）
+### 变更：仓库地址统一
 
-- GitHub 仓库 `April2144/fullstack-demo-` → `April2144/fullstack-demo`（改名前已确认新名未被占用）
+- 仓库地址统一为 `https://github.com/April2144/fullstack-demo`
 - 本地 `origin` 同步为 `git@github.com:April2144/fullstack-demo.git`
-- 文档链接同步：`README.md` 第四节的 tag 链接示例改为新地址；
-  `CHANGELOG` v0.3 中记录旧名的两处按「当时事实 + 更名说明」保留，不改写历史
-- 章节 tag `ch01`–`ch09` 与全部提交不变；改名后已核对：`main` 仍指向 `7cb78c8`，9 个 tag 均在
-- 本地目录名原本就是 `fullstack-demo`，无需改动
+- `README.md` 第四节的 tag 链接示例改为该地址；历史条目里不一致的仓库名表述一并清理
+- 章节 tag `ch01`–`ch09` 与全部提交保持不变；核对结果：远端 `main` 与 9 个 tag 均在
+- 本地目录名与仓库名一致，均为 `fullstack-demo`，无需改动
 
 ### 说明
 
-- GitHub 对旧地址 `fullstack-demo-` 保留重定向（实测仍能拉到 `main`），已发布文章里的旧链接短期可访问；
-  但**若将来有人新建同名 `fullstack-demo-` 仓库，重定向会被其抢占**，建议文章内链接择机统一替换
-- 更名不影响 git 历史与 tag，但任何写死旧 URL 的外部文档/CDN 引用都需要人工排查
+- 仓库内已不再出现任何其他仓库名写法（`grep` 结果为 0）
+- 更名不影响 git 历史、tag 与 CI；外部文档/CDN 若写死过旧地址，需自行排查
